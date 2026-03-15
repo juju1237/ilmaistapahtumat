@@ -7,4 +7,4 @@
 * Käyttäjä pystyy etsimään tietokohteita hakusanalla. Käyttäjä pystyy hakemaan sekä itse lisäämiään että muiden käyttäjien lisäämiä tietokohteita.
 * Sovelluksessa on käyttäjäsivut, jotka näyttävät jokaisesta käyttäjästä tilastoja ja käyttäjän lisäämät ilmoitukset.
 * Käyttäjä pystyy valitsemaan ilmoitukselle yhden tai useamman luokittelun (esim. sijainti, kellonaika, ikäraja).
-* Käyttäjä pystyy kommentoimaan omiin sekä muiden käyttäjien ilmoituksiin (esim. lisätietoa tapahtumasta tai hypeä).
+* Käyttäjä pystyy kommentoimaan omiin sekä muiden käyttäjien ilmoituksiin (esim. lisätietoa tapahtumasta, hype).
