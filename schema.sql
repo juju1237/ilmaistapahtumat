@@ -5,3 +5,12 @@ CREATE TABLE users (
     password_hash TEXT
 );
 
+CREATE TABLE items (
+    id INTEGER PRIMARY KEY,
+    title TEXT,
+    description TEXT,
+    date TEXT,
+    time TEXT,
+    location TEXT,
+    user_id INTEGER REFERENCES users
+);
