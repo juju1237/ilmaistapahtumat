@@ -7,6 +7,7 @@ from werkzeug.security import check_password_hash
 import db
 import config
 
+import items
 
 app = Flask(__name__)
 app.secret_key = config.secret_key
@@ -28,9 +29,7 @@ def create_item():
     date = request.form["date"]
     location = request.form["location"]
     user_id = session["user_id"]
-
-    sql = "INSERT INTO items (title, description, date, time, location, user_id) VALUES (?, ?, ?, ?, ?, ?)"
-    db.execute(sql, [title, description, date, time, location, user_id])
+    items.add_item(title, description, date, time, location, user_id)
 
     return redirect("/")
 
