@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title> {{ item.title }} </title>
+</head>
+
+<body>
+  <h1> {{ item.title }} </h1>
+  <p>
+    {{item.description}}
+  </p>
+  <p>
+    Päivämäärä: {{item.date}}
+  </p>
+    <p>
+    Järjestäjä: {{item.userna,e}}
+  </p>
+
+  <p>
+    <a href="/">Takaisin</a>
+  </p>
+ 
+  
+
+  <form action="/create_item" method="post">
+    <p>
+      Otsikko: <br />
+      <input type="text" name="title" size="50"/>
+    </p>
+    <p>
+      Kuvaus: <br />
+      <textarea  name ="description" rows="10" cols="70"></textarea>
+    </p>
+    <p>
+      Päivämäärä: <br />
+      <input type="text" name="date" size="10" />
+    </p>
+    <p>
+      Kellonaika: <br />
+      Klo <input type="text" name="time" size="8" />
+    </p>
+    <p>
+      Sijainti: <br />
+      <input type="text" name="location" size="15" />
+    </p>
+
+    
+    <input type="submit" value="Luo ilmoitus" />
+  </form>
+</body>
+
+</html>
