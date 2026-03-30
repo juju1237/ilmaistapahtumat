@@ -18,6 +18,16 @@ def index():
     all_items = items.get_items()   
     return render_template("index.html", items=all_items)
 
+@app.route("/find_event")
+def find_event():
+    query = request.args.get("query")
+    if query:
+        results = items.find_events(query)
+    else:
+        query = ""
+        results = []
+    return render_template("find_event.html", query=query, results=results)
+
 @app.route("/item/<int:item_id>")
 def page(item_id):
     item = items.get_item(item_id)

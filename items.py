@@ -35,3 +35,15 @@ def edit_event(item_id, title, description, date, time, location):
 def remove_event(item_id):
     sql = "DELETE FROM items WHERE id = ?"
     db.execute(sql, [item_id])
+
+def find_events(query):
+    sql = """SELECT id, title
+            FROM items
+            WHERE description LIKE ?
+            OR title LIKE ?
+            OR time LIKE ?
+            OR date LIKE ?
+            ORDER BY id DESC"""
+    res = "%" + query + "%"
+    return db.query(sql, [res, res, res, res])
+
