@@ -24,11 +24,22 @@ def page(item_id):
     return render_template("show_item.html", item=item)
 
 
-@app.route("/update_event/<int:item_id>")
+@app.route("/update_event/<int:item_id>", methods=["GET", "POST"])
 def update_event(item_id):
-    item = items.get_item(item_id)
-    return render_template("edit_item.html", item=item)
+    if request.method == "GET":
+        item = items.get_item(item_id)
+        return render_template("edit_item.html", item=item)
 
+    if request.method == "POST":
+        title = request.form["title"]
+        description = request.form["description"]
+        time = request.form["time"]
+        date = request.form["date"]
+        location = request.form["location"]
+
+        items.edit_event(item_id, title, description, date, time, location)
+
+        return redirect("/item/" + str(item_id))
 
 @app.route("/new_item")
 def new_item():
@@ -46,17 +57,18 @@ def create_item():
 
     return redirect("/")
 
-@app.route("/update_event/<int:item_id>", methods=["POST"])
-def edit_event(item_id):
-    item_id = request.form["item_id"]
-    title = request.form["title"]
-    description = request.form["description"]
-    time = request.form["time"]
-    date = request.form["date"]
-    location = request.form["location"]
-    items.edit_event(item_id, title, description, date, time, location)
+@app.route("/remove_event/<int:item_id>", methods=["GET", "POST"])
+def remove_event(item_id):
+    if request.method == "GET":
+        item = items.get_item(item_id)
+        return render_template("remove_event.html", item=item)
 
-    return redirect("/item/" + str(item_id))
+    if request.method == "POST":
+        if "remove" in request.form:
+            items.remove_event(item_id)
+            return redirect("/")
+        else:
+            return redirect("/item/" + str(item_id))
 
 
 @app.route("/register")

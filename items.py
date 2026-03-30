@@ -15,6 +15,7 @@ def get_item(item_id):
         items.description,
         items.date,
         items.time,
+        items.location,
         users.id user_id,
         users.username
     FROM items, users
@@ -30,3 +31,7 @@ def edit_event(item_id, title, description, date, time, location):
                                 location = ?
                             WHERE id = ?"""
     db.execute(sql, [title, description, date, time, location, item_id])
+
+def remove_event(item_id):
+    sql = "DELETE FROM items WHERE id = ?"
+    db.execute(sql, [item_id])
