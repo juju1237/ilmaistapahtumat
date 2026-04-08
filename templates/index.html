@@ -18,14 +18,14 @@
     <a href="/logout">Kirjaudu ulos</a>
   </p>
   <p>
-    <a href="/new_item">Uusi tapahtuma</a>
+    <a href="/new_event">Uusi tapahtuma</a>
     <a href="/find_event">Hae tapahtumaa</a>
 
   </p>
 
   <h2>Tapahtumat</h2>
-  <ul>{% for item in items %}
-    <li><a href="/item/{{ item.id }}">{{ item.title }}</a> </li>
+  <ul>{% for event in events %}
+    <li><a href="/event/{{ event.id }}">{{ event.title }}</a> </li>
     {%endfor%}
   </ul>
 </body>

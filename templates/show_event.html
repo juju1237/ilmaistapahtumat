@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title> {{ event.title }} </title>
+</head>
+
+<body>
+  <h1> {{ event.title }} </h1>
+
+  {% if session.user_id == event.user_id %}
+  <p>
+    <a href="/update_event/{{ event.id }}">Muokkaa</a>
+    <a href="/remove_event/{{ event.id }}">Poista</a>
+
+  </p>
+  {% endif %}
+  <p>
+    {{ event.description }}
+  </p>
+  <p>
+    Päivämäärä: {{ event.date }}
+  </p>
+    <p>
+    Sijainti: {{ event.location }}
+  </p>
+    <p>
+    Kellonaika: {{ event.time }}
+  </p>
+  <p>
+    Järjestäjä: {{ event.username }}
+  </p>
+  <p>
+    <a href="/">Takaisin</a>
+  </p>
+ 
+  
+  </form>
+</body>
+
+</html>

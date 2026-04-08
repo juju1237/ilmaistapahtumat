@@ -1,13 +1,13 @@
 import sqlite3
 from flask import Flask
-from flask import redirect, render_template, request, session
+from flask import abort, redirect, render_template, request, session, flash
 from werkzeug.security import generate_password_hash
 from werkzeug.security import check_password_hash
 
 import db
 import config
 
-import items
+import events
 
 app = Flask(__name__)
 app.secret_key = config.secret_key
@@ -15,70 +15,93 @@ app.secret_key = config.secret_key
 
 @app.route("/")
 def index():
-    all_items = items.get_items()   
-    return render_template("index.html", items=all_items)
+    all_events = events.get_events()
+    return render_template("index.html", events=all_events)
 
 @app.route("/find_event")
 def find_event():
     query = request.args.get("query")
     if query:
-        results = items.find_events(query)
+        results = events.find_events(query)
     else:
         query = ""
         results = []
     return render_template("find_event.html", query=query, results=results)
 
-@app.route("/item/<int:item_id>")
-def page(item_id):
-    item = items.get_item(item_id)
-    return render_template("show_item.html", item=item)
+@app.route("/event/<int:event_id>")
+def page(event_id):
+    event = events.get_event(event_id)
+    return render_template("show_event.html", event=event)
 
 
-@app.route("/update_event/<int:item_id>", methods=["GET", "POST"])
-def update_event(item_id):
+@app.route("/update_event/<int:event_id>", methods=["GET", "POST"])
+def update_event(event_id):
     if request.method == "GET":
-        item = items.get_item(item_id)
-        return render_template("edit_item.html", item=item)
+        event = events.get_event(event_id)
+        if event["user_id"] != session["user_id"]:
+            abort(403)
+        return render_template("edit_event.html", event=event)
 
     if request.method == "POST":
+        event_id = request.form["event_id"]
+        event = events.get_event(event_id)
+        if event["user_id"] != session["user_id"]:
+            abort(403)
         title = request.form["title"]
         description = request.form["description"]
         time = request.form["time"]
         date = request.form["date"]
         location = request.form["location"]
 
-        items.edit_event(item_id, title, description, date, time, location)
+        events.edit_event(event_id, title, description, date, time, location)
 
-        return redirect("/item/" + str(item_id))
+        return redirect("/event/" + str(event_id))
 
-@app.route("/new_item")
-def new_item():
-    return render_template("new_item.html")
+@app.route("/new_event")
+def new_event():
+    return render_template("new_event.html")
 
-@app.route("/create_item", methods=["POST"])
-def create_item():
+@app.route("/create_event", methods=["POST"])
+def create_event():
     title = request.form["title"]
     description = request.form["description"]
     time = request.form["time"]
     date = request.form["date"]
     location = request.form["location"]
     user_id = session["user_id"]
-    items.add_item(title, description, date, time, location, user_id)
+    events.add_event(title, description, date, time, location, user_id)
 
     return redirect("/")
+@app.route("/remove_event/<int:event_id>", methods=["GET", "POST"])
+def remove_event(event_id):
+    if "user_id" not in session:
+        flash("Sinun täytyy olla kirjautuneena poistaaksesi tapahtumia.")
+        return redirect("/login")
 
-@app.route("/remove_event/<int:item_id>", methods=["GET", "POST"])
-def remove_event(item_id):
+    event = events.get_event(event_id)
+
+    if event is None:
+        abort(404)
+
+    if event["user_id"] != session["user_id"]:
+        abort(403)
+
     if request.method == "GET":
-        item = items.get_item(item_id)
-        return render_template("remove_event.html", item=item)
+        return render_template("remove_event.html", event=event)
 
     if request.method == "POST":
-        if "remove" in request.form:
-            items.remove_event(item_id)
-            return redirect("/")
-        else:
-            return redirect("/item/" + str(item_id))
+        try:
+            if "remove" in request.form:
+                events.remove_event(event_id)
+                flash("Tapahtuma on poistettu onnistuneesti.")
+                return redirect("/")
+            else:
+                return redirect("/event/" + str(event_id))
+        except Exception as e:
+            # Tulosta virhe lokiin ja näytä käyttäjälle virheviesti
+            print(f"Virhe tapahtuman poistamisessa: {e}")
+            flash("Tapahtuman poistamisessa tapahtui virhe.")
+            return redirect("/event/" + str(event_id))
 
 
 @app.route("/register")
