@@ -127,7 +127,7 @@ def create():
     except sqlite3.IntegrityError:
         return "VIRHE: tunnus on jo varattu"
 
-    return "Tunnus luotu! Tervetuloa"
+    return render_template("registration_success.html", username=username)
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -155,7 +155,8 @@ def login():
 
 @app.route("/logout")
 def logout():
-    del session["user_id"]
-    del session["username"]
+    if "user_id" in session:
+        del session["user_id"]
+        del session["username"]
     return redirect("/")
 
