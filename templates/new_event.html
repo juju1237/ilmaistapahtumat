@@ -7,6 +7,11 @@
 
 <body>
   <h1>Uusi tapahtuma</h1>
+  {% for message in get_flashed_messages() %}
+  <p>
+    <b>{{ message }}</b>
+  </p>
+  {% endfor %}
   <form action="/create_event" method="post">
     <p>
       Otsikko: <br />
@@ -50,6 +55,10 @@
 
     
     <input type="submit" value="Luo ilmoitus" />
+  </form>
+
+  <form action="/" method="get">
+    <input type="submit" value="Etusivulle" />
   </form>
 </body>
 

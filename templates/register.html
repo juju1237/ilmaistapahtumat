@@ -7,6 +7,12 @@
 
 <body>
   <h1>Rekisteröinti</h1>
+  {% for message in get_flashed_messages() %}
+  <p>
+    <b>{{ message }}</b>
+  </p>
+  {% endfor %}
+
   <form action="/create" method="post">
     <p>
       Tunnus: <br />
@@ -22,9 +28,9 @@
     </p>
     <input type="submit" value="Luo tunnus" />
   </form>
-
-  <br />
-  <a href="/">Etusivulle</a>
+  <form action="/" method="get">
+    <input type="submit" value="Etusivulle" />
+  </form>
 </body>
 
 </html>

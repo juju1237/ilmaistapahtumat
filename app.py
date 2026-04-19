@@ -6,14 +6,29 @@ import config
 import events
 import users
 import comments
+import os
+import secrets
 
-con = sqlite3.connect('database.db', timeout=10)
+con = sqlite3.connect("database.db", timeout=10)
 app = Flask(__name__)
 app.secret_key = config.secret_key
 
 def require_login():
     if "user_id" not in session:
         abort(403)
+
+def check_csrf():
+    if "csrf_token" not in request.form or request.form["csrf_token"] != session.get("csrf_token"):
+        abort(403)
+
+def validate_event_data(title, description, time, date, location):
+    if not title or len(title) > 60:
+        return False
+    if not description or len(description) > 5000:
+        return False
+    if not location or len(location) > 100:
+        return False
+    return True
 
 
 @app.route("/")
@@ -95,25 +110,22 @@ def new_event():
 def create_event():
     require_login()
 
-    # Seuraavaksi syötekentät ja tarkistus ettei syötteet ole tyhjiä tai liian pitkiä
     title = request.form["title"]
-    if not title or len(title) > 60:
-        abort(403)
     description = request.form["description"]
-    if not description or len(description) > 5000:
-        abort(403)
     time = request.form["time"]
     date = request.form["date"]
     location = request.form["location"]
-    if not location or len(location) > 100:
-        abort(403)
 
-    classes = request.form.getlist('section')
+    if validate_event_data(title, description, time, date, location):
+        classes = request.form.getlist("section")
+        user_id = session["user_id"]
+        events.add_event(title, description, date, time, location, user_id, classes)
 
-    user_id = session["user_id"]
-    events.add_event(title, description, date, time, location, user_id, classes)
+        return redirect("/")
+    else:
+        flash("VIRHE: Tarkista syötteesi. Varmista, että kaikki kentät ovat oikein.")
+        return redirect("/new_event")
 
-    return redirect("/")
 
 @app.route("/remove_event/<int:event_id>", methods=["GET", "POST"])
 def remove_event(event_id):
@@ -140,8 +152,6 @@ def remove_event(event_id):
             else:
                 return redirect("/event/" + str(event_id))
         except Exception as e:
-            # Tulosta virhe lokiin ja näytä käyttäjälle virheviesti
-            print(f"Virhe tapahtuman poistamisessa: {e}")
             flash("Tapahtuman poistamisessa tapahtui virhe.")
             return redirect("/event/" + str(event_id))
 
@@ -156,21 +166,24 @@ def create():
     password1 = request.form["password1"]
     password2 = request.form["password2"]
     if password1 != password2:
-        return "VIRHE: salasanat eivät ole samat"
+        flash("VIRHE: salasanat eivät ole samat")
+        return redirect("/register")
 
     try:
         users.create_user(username, password1)
     except sqlite3.IntegrityError:
-        return "VIRHE: tunnus on jo varattu"
+        flash("VIRHE: tunnus on jo varattu")
+        return redirect("/register")
 
     return render_template("registration_success.html", username=username)
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "GET":
+        session["csrf_token"] = secrets.token_hex(16)
         return render_template("login.html")
 
-    if request.method == 'POST':
+    if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
 
@@ -180,10 +193,12 @@ def login():
             session["username"] = username
             return redirect("/")
         else:
-            return "VIRHE: väärä tunnus tai salasana"
+            flash("VIRHE: väärä tunnus tai salasana")
+            return redirect("/login")
 
 @app.route("/logout")
 def logout():
+    #require_login()
     if "user_id" in session:
         del session["user_id"]
         del session["username"]

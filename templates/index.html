@@ -7,26 +7,30 @@
 
 <body>
   <h1> Ilmaistapahtumat</h1>
+
   {% if session.username %}
     <p>
       Olet kirjautunut nimellä {{ session.username }}, id-numerosi on {{ session.user_id }}
     </p>
-    <p>
-      <a href="/logout">Kirjaudu ulos</a>
-    </p>
-    <p>
-      <a href="/new_event">Uusi tapahtuma</a>
-    </p>
+    <form action="logout" method="get">
+      <input type="submit" value="Kirjaudu ulos" />
+    </form>
+    <form action="/new_event" method="get">
+      <input type="submit" value="Uusi tapahtuma" />
+    </form>
   {% else %}
-    <p>
-      <a href="/login">Kirjaudu sisään</a>
-      <a href="/register">Luo tunnus</a>
-    </p>
+    <form action="/login" method="get">
+      <input type="submit" value="Kirjaudu sisään" />
+    </form>
+
+    <form action="/register" method="get">
+      <input type="submit" value="Luo tunnus" />
+    </form>
 
   {% endif %}
-  <p>
-    <a href="/find_event">Hae tapahtumaa</a>
-  </p>
+  <form action="/find_event" method="get">
+    <input type="submit" value="Etsi tapahtuma" />
+  </form>
 
   <h2>Tapahtumat</h2>
   <ul>{% for event in events %}

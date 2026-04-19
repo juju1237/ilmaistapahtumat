@@ -7,6 +7,11 @@
 
 <body>
   <h1> Ilmaistapahtumat</h1>
+  {% for message in get_flashed_messages() %}
+  <p>
+    <b>{{ message }}</b>
+  </p>
+  {% endfor %}
 
   {% if session.username %}
   <p>
@@ -17,6 +22,7 @@
   </p>
   {% else %}
   <form action="/login" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
     <p>
       Tunnus: <br />
       <input type="text" name="username" />
@@ -28,6 +34,9 @@
     <input type="submit" value="Kirjaudu" />
   </form>
   {% endif %}
+  <form action="/" method="get">
+    <input type="submit" value="Etusivulle" />
+  </form>
 </body>
 
 </html>

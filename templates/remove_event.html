@@ -5,11 +5,16 @@
 </head>
 <body>
   <h1>Tapahtumailmoituksen poisto</h1>
+  {% for message in get_flashed_messages() %}
+  <p>
+    <b>{{ message }}</b>
+  </p>
+  {% endfor %}
   <p>Tapahtuma: {{ event.title }}</p>
   <p>Haluatko varmasti poistaa tämän tapahtuman?</p>
   <form action="/remove_event/{{ event.id }}" method="POST">
     <input type="submit" name="remove" value="Poista tapahtuma">
   </form>
-  <a href="/event/{{ event.id }}">Palaa takaisin</a>
+  <a href="/event/{{ event.id }}">Takaisin tapahtumaan</a>
 </body>
 </html>
