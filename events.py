@@ -1,8 +1,9 @@
 import db
+import base64
 
-def add_event(title, description, date, time, location, user_id, classes):
-    sql = "INSERT INTO events (title, description, date, time, location, user_id) VALUES (?, ?, ?, ?, ?, ?)"
-    db.execute(sql, [title, description, date, time, location, user_id])
+def add_event(title, description, date, time, location, user_id, classes, image_blob=None):
+    sql = "INSERT INTO events (title, description, date, time, location, user_id, image) VALUES (?, ?, ?, ?, ?, ?, ?)"
+    db.execute(sql, [title, description, date, time, location, user_id, image_blob])
 
     event_id = db.last_insert_id()
 
@@ -25,6 +26,7 @@ def get_event(event_id):
         events.date,
         events.time,
         events.location,
+        events.image IS NOT NULL has_image,
         users.id user_id,
         users.username
     FROM events, users
@@ -44,8 +46,18 @@ def edit_event(event_id, title, description, date, time, location):
     db.execute(sql, [title, description, date, time, location, event_id])
 
 def remove_event(event_id):
+    # Poista ensin tapahtumaan liittyvät kommentit
+    sql = "DELETE FROM comments WHERE event_id = ?"
+    db.execute(sql, [event_id])
+
+    # Poista tapahtumaan liittyvät luokat
+    sql = "DELETE FROM event_classes WHERE event_id = ?"
+    db.execute(sql, [event_id])
+
+    # Poista itse tapahtuma
     sql = "DELETE FROM events WHERE id = ?"
     db.execute(sql, [event_id])
+
 
 def find_events(query):
     sql = """SELECT id, title
@@ -57,3 +69,12 @@ def find_events(query):
             ORDER BY id DESC"""
     res = "%" + query + "%"
     return db.query(sql, [res, res, res, res])
+
+def update_image(event_id, image):
+    sql = "UPDATE events SET image = ? WHERE id = ?"
+    db.execute(sql, [image, event_id])
+
+def get_image(event_id):
+    sql = "SELECT image FROM events WHERE id = ?"
+    result = db.query(sql, [event_id])
+    return result[0][0] if result else None

@@ -13,6 +13,7 @@
   <p>Tapahtuma: {{ event.title }}</p>
   <p>Haluatko varmasti poistaa tämän tapahtuman?</p>
   <form action="/remove_event/{{ event.id }}" method="POST">
+    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
     <input type="submit" name="remove" value="Poista tapahtuma">
   </form>
   <a href="/event/{{ event.id }}">Takaisin tapahtumaan</a>

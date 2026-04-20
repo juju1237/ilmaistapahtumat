@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS users (
     password_hash TEXT
 );
 
-CREATE TABLE IF NOT EXISTS events (
+CREATE TABLE events (
     id INTEGER PRIMARY KEY,
     title TEXT,
     description TEXT,

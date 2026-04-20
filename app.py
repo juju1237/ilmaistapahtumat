@@ -1,12 +1,7 @@
 import sqlite3
 from flask import Flask
-from flask import abort, redirect, render_template, request, session, flash
-import db
-import config
-import events
-import users
-import comments
-import os
+from flask import abort, make_response, redirect, render_template, request, session, flash
+import config, events, users, comments
 import secrets
 
 con = sqlite3.connect("database.db", timeout=10)
@@ -115,11 +110,23 @@ def create_event():
     time = request.form["time"]
     date = request.form["date"]
     location = request.form["location"]
+    image = request.files.get("image")
+
+    image_blob = None
+    if image and image.filename != "":
+        if not image.filename.endswith(".jpg"):
+            flash("VIRHE: Väärä tiedostotyyppi. Vain .jpg-tiedostot ovat sallittuja.")
+            return redirect("/new_event")
+
+        image_blob = image.read()
+        if len(image_blob) > 100 * 1024:  # 100 KB max size
+            flash("VIRHE: Liian suuri kuva. Maksimikoko on 100 KB.")
+            return redirect("/new_event")
 
     if validate_event_data(title, description, time, date, location):
         classes = request.form.getlist("section")
         user_id = session["user_id"]
-        events.add_event(title, description, date, time, location, user_id, classes)
+        events.add_event(title, description, date, time, location, user_id, classes, image_blob)
 
         return redirect("/")
     else:
@@ -144,6 +151,7 @@ def remove_event(event_id):
         return render_template("remove_event.html", event=event)
 
     if request.method == "POST":
+        check_csrf()
         try:
             if "remove" in request.form:
                 events.remove_event(event_id)
@@ -211,3 +219,41 @@ def add_comment(event_id):
     user_id = session["user_id"]
     comments.add_comment(event_id, user_id, comment)
     return redirect("/event/" + str(event_id))
+
+@app.route("/add_event_image/<int:event_id>", methods=["GET", "POST"])
+def add_event_image(event_id):
+    require_login()
+
+    event = events.get_event(event_id)
+    if not event:
+        abort(404)
+    if event["user_id"] != session["user_id"]:
+        abort(403)
+
+    if request.method == "GET":
+        return render_template("add_event_image.html", event=event)
+
+    if request.method == "POST":
+        file = request.files["image"]
+        if not file or file.filename.endswith(".jpg"):
+            flash("VIRHE: väärä tiedostomuoto. Vain .jpg-tiedostot ovat sallittuja.")
+            return redirect(f"/add_event_image/{event_id}")
+
+        image_blob = file.read()
+        if len(image) > 100 * 1024:  # 100 KB max size
+            flash("VIRHE: liian suuri kuva. Maksimikoko on 100 KB.")
+            return redirect(f"/add_event_image/{event_id}")
+
+        events.update_image(event_id, image_blob)
+        flash("Kuva lisätty onnistuneesti!")
+        return redirect("/event/" + str(event_id))
+
+@app.route("/image/<int:event_id>")
+def show_event_image(event_id):
+    image = events.get_image(event_id)
+    if not image:
+        abort(404)
+
+    response = make_response(bytes(image))
+    response.headers.set("Content-Type", "image/jpeg")
+    return response

@@ -12,7 +12,7 @@
     <b>{{ message }}</b>
   </p>
   {% endfor %}
-  <form action="/create_event" method="post">
+  <form action="/create_event" method="post" enctype="multipart/form-data">
     <p>
       Otsikko: <br />
       <input type="text" name="title" size="50" maxlength="60" required />
@@ -52,11 +52,12 @@
         <option value="muu">muu</option>
       </select>
     </p>
-
-    
+    <p>
+      Lisää kuva (vain .jpg, max 100 KB): <br />
+      <input type="file" name="image" accept=".jpg">
+    </p>
     <input type="submit" value="Luo ilmoitus" />
   </form>
-
   <form action="/" method="get">
     <input type="submit" value="Etusivulle" />
   </form>

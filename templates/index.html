@@ -7,7 +7,11 @@
 
 <body>
   <h1> Ilmaistapahtumat</h1>
-
+  {% for message in get_flashed_messages() %}
+  <p>
+    <b>{{ message }}</b>
+  </p>
+  {% endfor %}
   {% if session.username %}
     <p>
       Olet kirjautunut nimellä {{ session.username }}, id-numerosi on {{ session.user_id }}
