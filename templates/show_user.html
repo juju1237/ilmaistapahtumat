@@ -10,10 +10,10 @@
   <p>
     Käyttäjällä on yhteensä {{ events | count }} ilmoitusta
   </p>
-  <h2>Ilmoitukset</h2>
+<h2>Ilmoitukset</h2>
   <ul>
     {% for event in events %}
-    <li><a href="/event/{{ event.id }}">{{ event.title }} {{ event.date }}</a></li>
+      <li><a href="/event/{{ event.id }}">{{ event.title }}</a> - {{ event.date }}</li>
     {% endfor %}
   </ul>
 

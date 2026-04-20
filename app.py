@@ -3,6 +3,7 @@ from flask import Flask
 from flask import abort, make_response, redirect, render_template, request, session, flash
 import config, events, users, comments
 import secrets
+from datetime import datetime
 
 con = sqlite3.connect("database.db", timeout=10)
 app = Flask(__name__)
@@ -81,20 +82,21 @@ def update_event(event_id):
         if event["user_id"] != session["user_id"]:
             abort(403)
         title = request.form["title"]
-        if not title or len(title) > 60:
-            abort(403)
         description = request.form["description"]
-        if not description or len(description) > 5000:
-            abort(403)
         time = request.form["time"]
-        date = request.form["date"]
+        date_raw = request.form["date"]
         location = request.form["location"]
-        if not location or len(location) > 100:
-            abort(403)
 
-        events.edit_event(event_id, title, description, date, time, location)
+        try:
+            date = datetime.strptime(date_raw, "%Y-%m-%d").strftime("%d.%m.%Y")
+        except ValueError:
+            flash("VIRHE: Päivämäärä ei ole oikeassa muodossa.")
+            return redirect(f"/update_event/{event_id}")
 
-        return redirect("/event/" + str(event_id))
+        if validate_event_data(title, description, time, date, location):
+            events.edit_event(event_id, title, description, date, time, location)
+
+            return redirect("/event/" + str(event_id))
 
 @app.route("/new_event")
 def new_event():
@@ -108,9 +110,16 @@ def create_event():
     title = request.form["title"]
     description = request.form["description"]
     time = request.form["time"]
-    date = request.form["date"]
+    date_raw = request.form["date"]
     location = request.form["location"]
     image = request.files.get("image")
+
+    try:
+        date = datetime.strptime(date_raw, "%Y-%m-%d").strftime("%d.%m.%Y")
+    except ValueError:
+        flash("VIRHE: Päivämäärä ei ole oikeassa muodossa.")
+        return redirect("/new_event")
+
 
     image_blob = None
     if image and image.filename != "":

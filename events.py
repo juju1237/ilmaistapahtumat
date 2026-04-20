@@ -1,5 +1,4 @@
 import db
-import base64
 
 def add_event(title, description, date, time, location, user_id, classes, image_blob=None):
     sql = "INSERT INTO events (title, description, date, time, location, user_id, image) VALUES (?, ?, ?, ?, ?, ?, ?)"
@@ -16,7 +15,7 @@ def get_classes(event_id):
     return db.query(sql, [event_id])
 
 def get_events():
-    sql = "SELECT id, title FROM events ORDER BY id DESC"
+    sql = "SELECT id, title, date FROM events ORDER BY id DESC"
     return db.query(sql)
 
 def get_event(event_id):
