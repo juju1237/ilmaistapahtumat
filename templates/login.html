@@ -23,6 +23,13 @@
   {% else %}
   <form action="/login" method="post">
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+
+    {% if next_page %}
+    <input type="hidden" name="next_page" value="{{ next_page }}" />
+    {% else %}
+    <input type="hidden" name="next_page" value="/" />
+    {% endif %}
+
     <p>
       Tunnus: <br />
       <input type="text" name="username" value="{{ filled.username }}" />
