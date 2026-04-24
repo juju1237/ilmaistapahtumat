@@ -1,21 +1,21 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Tapahtumailmoituksen poisto</title>
-</head>
-<body>
-  <h1>Tapahtumailmoituksen poisto</h1>
-  {% for message in get_flashed_messages() %}
-  <p>
-    <b>{{ message }}</b>
-  </p>
-  {% endfor %}
-  <p>Tapahtuma: {{ event.title }}</p>
-  <p>Haluatko varmasti poistaa tämän tapahtuman?</p>
-  <form action="/remove_event/{{ event.id }}" method="POST">
-    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-    <input type="submit" name="remove" value="Poista tapahtuma">
-  </form>
-  <a href="/event/{{ event.id }}">Takaisin tapahtumaan</a>
-</body>
-</html>
+{% extends "layout.html" %}
+
+{% block title %}Tapahtumailmoituksen poisto{% endblock %}
+
+{% block content %}
+<h2>Tapahtumailmoituksen poisto</h2>
+
+{% for message in get_flashed_messages() %}
+<p class="info">
+  {{ message }}
+</p>
+{% endfor %}
+
+<p>Tapahtuma: {{ event.title }}</p>
+<p>Haluatko varmasti poistaa tämän tapahtuman?</p>
+<form action="/remove_event/{{ event.id }}" method="POST">
+  <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+  <input type="submit" name="remove" value="Poista tapahtuma">
+</form>
+<a href="/event/{{ event.id }}">Takaisin tapahtumaan</a>
+{% endblock %}

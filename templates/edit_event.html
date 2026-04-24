@@ -1,43 +1,40 @@
-<!DOCTYPE html>
-<html>
+{% extends "layout.html" %}
 
-<head>
-  <title>Tapahtumailmoituksen päivitys</title>
-</head>
+{% block title %}Tapahtumailmoituksen päivitys{% endblock %}
 
-<body>
-  <h1>Tapahtumailmoituksen päivitys</h1>
-  {% for message in get_flashed_messages() %}
+{% block content %}
+<h2>Tapahtumailmoituksen päivitys</h2>
+
+{% for message in get_flashed_messages() %}
+<p class="info">
+  {{ message }}
+</p>
+{% endfor %}
+
+<form action="/update_event/{{ event.id }}" method="POST">
+  <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
   <p>
-    <b>{{ message }}</b>
+    Otsikko: <br />
+    <input type="text" name="title" size="50" value="{{ event.title }}" maxlength="60" required />
   </p>
-  {% endfor %}
-  <form action="/update_event/{{ event.id }}" method="POST">
-    <p>
-      Otsikko: <br />
-      <input type="text" name="title" size="50" value="{{ event.title }}" maxlength="60" required />
-    </p>
-    <p>
-      Kuvaus: <br />
-      <textarea  name ="description" rows="10" cols="70" maxlength="1500" required >{{ event.description }}</textarea>
-    </p>
-    <p>
-      Päivämäärä (dd.mm.yyyy): <br />
-      <input type="text" name="date" size="10" value="{{ event.date }}"/>
-    </p>
-    <p>
-      Kellonaika: <br />
-      Klo <input type="text" name="time" size="6" value="{{ event.time }}"/>
-    </p>
-    <p>
-      Sijainti: <br />
-      <input type="text" name="location" size="20" value="{{ event.location }}" maxlength="100" required />
-    </p>
+  <p>
+    Kuvaus: <br />
+    <textarea name="description" rows="10" cols="70" maxlength="1500" required>{{ event.description }}</textarea>
+  </p>
+  <p>
+    Päivämäärä (dd.mm.yyyy): <br />
+    <input type="text" name="date" size="10" value="{{ event.date }}" />
+  </p>
+  <p>
+    Kellonaika: <br />
+    Klo <input type="text" name="time" size="6" value="{{ event.time }}" />
+  </p>
+  <p>
+    Sijainti: <br />
+    <input type="text" name="location" size="20" value="{{ event.location }}" maxlength="100" required />
+  </p>
 
-    <input type="hidden" name="event_id" value="{{ event.id }}">
-    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-    <input type="submit" value="Päivitä tapahtumailmoitus" />
-  </form>
-</body>
-
-</html>
+  <input type="hidden" name="event_id" value="{{ event.id }}">
+  <input type="submit" value="Päivitä tapahtumailmoitus" />
+</form>
+{% endblock %}

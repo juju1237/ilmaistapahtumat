@@ -1,47 +1,35 @@
-<!DOCTYPE html>
-<html>
+{% extends "layout.html" %}
 
-<head>
-  <title>Ilmaistapahtumat</title>
-</head>
+{% block title %}Ilmaistapahtumat{% endblock %}
 
-<body>
-  <h1> Ilmaistapahtumat</h1>
-  {% for message in get_flashed_messages() %}
-  <p>
-    <b>{{ message }}</b>
-  </p>
-  {% endfor %}
-  {% if session.username %}
+{% block content %}
+
+{% for message in get_flashed_messages() %}
+<p class="info">
+  {{ message }}
+</p>
+{% endfor %}
+
+{% if session.username %}
     <p>
       Olet kirjautunut nimellä {{ session.username }}, id-numerosi on {{ session.user_id }}
     </p>
-    <form action="logout" method="get">
-      <input type="submit" value="Kirjaudu ulos" />
-    </form>
-    <form action="/new_event" method="get">
-      <input type="submit" value="Uusi tapahtuma" />
-    </form>
-  {% else %}
-    <form action="/login" method="get">
-      <input type="submit" value="Kirjaudu sisään" />
-    </form>
+{% endif %}
 
-    <form action="/register" method="get">
-      <input type="submit" value="Luo tunnus" />
-    </form>
+<h2>Tapahtumat</h2>
+{% for event in events %}
+<div class="thread">
+  <p>
+    Tapahtuma:
+    <a href="/event/{{ event.id }}">{{ event.title }}</a>
+  </p>
+  <p>
+    Päivämäärä: {{ event.date }}
+  </p>
+  <p>
+    Järjestäjä: <a href="/user/{{ event.user_id }}">{{ event.username }}</a>
+  </p>
+</div>
+{% endfor %}
 
-  {% endif %}
-  <form action="/find_event" method="get">
-    <input type="submit" value="Etsi tapahtuma" />
-  </form>
-
-  <h2>Tapahtumat</h2>
-  <ul>
-    {% for event in events %}
-      <li><a href="/event/{{ event.id }}">{{ event.title }}</a> - {{ event.date }}</li>
-    {% endfor %}
-  </ul>
-</body>
-
-</html>
+{% endblock %}

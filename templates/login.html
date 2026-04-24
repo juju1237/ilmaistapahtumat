@@ -1,49 +1,21 @@
-<!DOCTYPE html>
-<html>
+{% extends "layout.html" %}
 
-<head>
-  <title>Kirjautuminen</title>
-</head>
+{% block title %}Kirjautuminen{% endblock %}
 
-<body>
-  <h1> Ilmaistapahtumat</h1>
-  {% for message in get_flashed_messages() %}
+{% block content %}
+<h2>Kirjautuminen</h2>
+
+<form action="/login" method="post">
+  <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+  <input type="hidden" name="next_page" value="/" />
   <p>
-    <b>{{ message }}</b>
-  </p>
-  {% endfor %}
-
-  {% if session.username %}
-  <p>
-    Olet kirjautunut nimellä {{ session.username }}
+    Tunnus: <br />
+    <input type="text" name="username" />
   </p>
   <p>
-    <a href="/logout">Kirjaudu ulos</a>
+    Salasana: <br />
+    <input type="password" name="password" />
   </p>
-  {% else %}
-  <form action="/login" method="post">
-    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-
-    {% if next_page %}
-    <input type="hidden" name="next_page" value="{{ next_page }}" />
-    {% else %}
-    <input type="hidden" name="next_page" value="/" />
-    {% endif %}
-
-    <p>
-      Tunnus: <br />
-      <input type="text" name="username" value="{{ filled.username }}" />
-    </p>
-    <p>
-      Salasana: <br />
-      <input type="password" name="password" />
-    </p>
-    <input type="submit" value="Kirjaudu" />
-  </form>
-  {% endif %}
-  <form action="/" method="get">
-    <input type="submit" value="Etusivulle" />
-  </form>
-</body>
-
-</html>
+  <input type="submit" value="Kirjaudu" />
+</form>
+{% endblock %}

@@ -4,6 +4,7 @@ from flask import abort, make_response, redirect, render_template, request, sess
 import config, events, users, comments
 import secrets
 from datetime import datetime
+import markupsafe
 
 con = sqlite3.connect("database.db", timeout=10)
 app = Flask(__name__)
@@ -15,9 +16,9 @@ def require_login():
 
 def check_csrf():
     if "csrf_token" not in request.form:
-        abort(403)
+        abort(403)  # Token puuttuu
     if request.form["csrf_token"] != session.get("csrf_token"):
-        abort(403)
+        abort(403)  # Token ei täsmää
 
 
 def validate_event_data(title, description, time, date, location):
@@ -29,6 +30,22 @@ def validate_event_data(title, description, time, date, location):
         return False
     return True
 
+def filled_event(title, description, date, time, location):
+    filled = {
+        "title": title,
+        "description": description,
+        "date": date,
+        "time": time,
+        "location": location
+    }
+    return render_template("new_event.html", filled=filled)
+
+
+@app.template_filter()
+def show_lines(content):
+    content = str(markupsafe.escape(content))
+    content = content.replace("\n", "<br />")
+    return markupsafe.Markup(content)
 
 @app.route("/")
 def index():
@@ -113,17 +130,6 @@ def new_event():
         "location": ""
     }
     return render_template("new_event.html", filled=empty)
-
-def filled_event(title, description, date, time, location):
-    filled = {
-        "title": title,
-        "description": description,
-        "date": date,
-        "time": time,
-        "location": location
-    }
-    return render_template("new_event.html", filled=filled)
-
 
 
 @app.route("/create_event", methods=["POST"])
@@ -220,15 +226,16 @@ def create():
 
     return render_template("registration_success.html", username=username)
 
+
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "GET":
-        return render_template("login.html", filled={}, next_page=request.referrer)
+        return render_template("login.html", filled={})
 
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
-        next_page = request.form["next_page"]
+        next_page = request.form.get("next_page", "/")
 
         user_id = users.check_login(username, password)
         if user_id:

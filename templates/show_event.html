@@ -1,67 +1,51 @@
-<!DOCTYPE html>
-<html>
+{% extends "layout.html" %}
 
-<head>
-  <title> {{ event.title }} </title>
-</head>
+{% block title %}{{ event.title }}{% endblock %}
 
-<body>
-  <h1> {{ event.title }} </h1>
+{% block content %}
+<h2>{{ event.title }}</h2>
 
-  {% if session.user_id == event.user_id %}
-  <p>
-    <a href="/update_event/{{ event.id }}">Muokkaa</a>
-    <a href="/remove_event/{{ event.id }}">Poista</a>
+{% if session.user_id == event.user_id %}
+<p>
+  <a href="/update_event/{{ event.id }}">Muokkaa</a>
+  <a href="/remove_event/{{ event.id }}">Poista</a>
+</p>
+{% endif %}
 
-  </p>
-  {% endif %}
-  {% if event.has_image %}
-  <p>
-    <img src="/image/{{ event.id }}" alt="Tapahtuman kuva" width="400">
-  </p>
-  {% endif %}
-  <p>
-    {{ event.description }}
-  </p>
-  <p>
-    Päivämäärä (dd.mm.yyyy): {{ event.date }}
-  </p>
-    <p>
-    Sijainti: {{ event.location }}
-  </p>
-    <p>
-    Kellonaika: {{ event.time }}
-  </p>
-  <p>
-    Järjestäjä: <a href="/user/{{ event.user_id }}"> {{ event.username }}</a>
-  </p>
-  {% if classes %}
-  <p>
-    Luokat:
-    <ul>
-      {% for class in classes %}
-      <li>{{ class.title }}</li>
-      {% endfor %}
-    </ul>
-  </p>
-  {% endif %}
-  <h2>Kommentit</h2>
+{% if event.has_image %}
+<p>
+  <img src="/image/{{ event.id }}" alt="Tapahtuman kuva" width="400">
+</p>
+{% endif %}
+
+<p>{{ event.description }}</p>
+<p>Päivämäärä (dd.mm.yyyy): {{ event.date }}</p>
+<p>Sijainti: {{ event.location }}</p>
+<p>Kellonaika: {{ event.time }}</p>
+<p>Järjestäjä: <a href="/user/{{ event.user_id }}">{{ event.username }}</a></p>
+
+{% if classes %}
+<p>
+  Luokat:
   <ul>
-    {% for comment in comments %}
-      <li><strong>{{ comment.username }}:</strong> {{ comment.comment }}</li>
+    {% for class in classes %}
+    <li>{{ class.title }}</li>
     {% endfor %}
   </ul>
-  <form action="/add_comment/{{ event.id }}" method="POST">
-    <textarea name="comment" rows="3" cols="50" required></textarea>
-      <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-    <input type="submit" value="Lisää kommentti">
-  </form>
-  <form action="/" method="get">
-    <input type="submit" value="Etusivulle" />
-  </form>
- 
-  
-  </form>
-</body>
+</p>
+{% endif %}
 
-</html>
+<h2>Kommentit</h2>
+<ul>
+  {% for comment in comments %}
+  <li><strong>{{ comment.username }}:</strong> {{ comment.comment }}</li>
+  {% endfor %}
+</ul>
+
+<form action="/add_comment/{{ event.id }}" method="POST">
+  <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+  <textarea name="comment" rows="3" cols="50" required></textarea>
+  <input type="submit" value="Lisää kommentti">
+</form>
+{% endblock %}
+

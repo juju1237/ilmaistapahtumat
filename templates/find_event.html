@@ -1,31 +1,27 @@
-<!DOCTYPE html>
-<html>
+{% extends "layout.html" %}
 
-<head>
-  <title>Etsi tapahtuma</title>
-</head>
+{% block title %}Etsi tapahtuma{% endblock %}
 
-<body>
-  <h1>Etsi tapahtuma</h1>
-  <form action="/find_event" method="get">
-    <p>
-      Hakusana: <input type="text" name="query" value="{{ query }}">
-    </p>
-    <input type="submit" value="Hae">
-  </form>
+{% block content %}
+<h2>Etsi tapahtuma</h2>
 
-  <form action="/" method="get">
-    <input type="submit" value="Etusivulle" />
-  </form>
+<form action="/find_event" method="get">
+  <p>
+    Hakusana: <input type="text" name="query" value="{{ query }}">
+  </p>
+  <input type="submit" value="Hae">
+</form>
 
-  {% if query %}
-  <h2>Tulokset</h2>
-  {% endif %}
-  <ul>
-    {% for event in results %}
-    <li><a href="/event/{{ event.id }}">{{ event.title }}</a></li>
-    {% endfor %}
-  </ul>
-</body>
+<form action="/" method="get">
+  <input type="submit" value="Etusivulle" />
+</form>
 
-</html>
+{% if query %}
+<h2>Tulokset</h2>
+{% endif %}
+<ul>
+  {% for event in results %}
+  <li><a href="/event/{{ event.id }}">{{ event.title }}</a></li>
+  {% endfor %}
+</ul>
+{% endblock %}

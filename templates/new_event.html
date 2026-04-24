@@ -1,67 +1,61 @@
-<!DOCTYPE html>
-<html>
+{% extends "layout.html" %}
 
-<head>
-  <title>Uusi tapahtuma</title>
-</head>
+{% block title %}Uusi tapahtuma{% endblock %}
 
-<body>
-  <h1>Uusi tapahtuma</h1>
-  {% for message in get_flashed_messages() %}
+{% block content %}
+<h2>Uusi tapahtuma</h2>
+
+{% for message in get_flashed_messages() %}
+<p class="info">
+  {{ message }}
+</p>
+{% endfor %}
+
+<form action="/create_event" method="post" enctype="multipart/form-data">
+  <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
   <p>
-    <b>{{ message }}</b>
+    Otsikko: <br />
+    <input type="text" name="title" value="{{ filled.title }}" size="50" maxlength="60" required />
   </p>
-  {% endfor %}
-  <form action="/create_event" method="post" enctype="multipart/form-data">
-    <p>
-      Otsikko: <br />
-      <input type="text" name="title" value="{{ filled.title }}" size="50"  maxlength="60" required />
-    </p>
-    <p>
-      Kuvaus: <br />
-      <textarea  name ="description" rows="10" cols="70" maxlength="5000" required >{{ filled.description }}</textarea>
-    </p>
-    <p>
-      Päivämäärä: <br />
-      <input type="date" name="date" value="{{ filled.date }}" size="10" required />
-    </p>
-    <p>
-      Kellonaika: <br />
-      Klo <input type="time" name="time" value="{{ filled.time }}" size="8" required />
-    </p>
-    <p>
-      Sijainti: <br />
-      <input type="text" name="location" value="{{ filled.location }}" size="50" maxlength="100" required />
-    </p>
-    <p>
-      Tapahtuman tyyppi: <br />
-      <select name="section" multiple>
-        <option value="">(valitse)</option>
-        <option value="askartelu">päihteetön</option>
-        <option value="musiikki">musiikki</option>
-        <option value="teatteri">teatteri</option>
-        <option value="urheilu">urheilu</option>
-        <option value="ruoka">ruoka</option>
-        <option value="tanssi">tanssi</option>
-        <option value="maalaustaide">maalaustaide</option>
-        <option value="lautapelit">lautapelit</option>
-        <option value="kirjallisuus">kirjallisuus</option>
-        <option value="elokuvat">elokuvat</option>
-        <option value="keramiikka">keramiikka</option>
-        <option value="luonto">luonto</option>
-        <option value="muu">muu</option>
-      </select>
-    </p>
-    <p>
-      Lisää kuva (vain .jpg, max 100 KB): <br />
-      <input type="file" name="image" accept=".jpg">
-    </p>
-    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-    <input type="submit" value="Luo ilmoitus" />
-  </form>
-  <form action="/" method="get">
-    <input type="submit" value="Etusivulle" />
-  </form>
-</body>
-
-</html>
+  <p>
+    Kuvaus: <br />
+    <textarea name="description" rows="10" cols="70" maxlength="5000" required>{{ filled.description }}</textarea>
+  </p>
+  <p>
+    Päivämäärä: <br />
+    <input type="date" name="date" value="{{ filled.date }}" size="10" required />
+  </p>
+  <p>
+    Kellonaika: <br />
+    Klo <input type="time" name="time" value="{{ filled.time }}" size="8" required />
+  </p>
+  <p>
+    Sijainti: <br />
+    <input type="text" name="location" value="{{ filled.location }}" size="50" maxlength="100" required />
+  </p>
+  <p>
+    Tapahtuman tyyppi: <br />
+    <select name="section" multiple>
+      <option value="">(valitse)</option>
+      <option value="askartelu">päihteetön</option>
+      <option value="musiikki">musiikki</option>
+      <option value="teatteri">teatteri</option>
+      <option value="urheilu">urheilu</option>
+      <option value="ruoka">ruoka</option>
+      <option value="tanssi">tanssi</option>
+      <option value="maalaustaide">maalaustaide</option>
+      <option value="lautapelit">lautapelit</option>
+      <option value="kirjallisuus">kirjallisuus</option>
+      <option value="elokuvat">elokuvat</option>
+      <option value="keramiikka">keramiikka</option>
+      <option value="luonto">luonto</option>
+      <option value="muu">muu</option>
+    </select>
+  </p>
+  <p>
+    Lisää kuva (vain .jpg, max 100 KB): <br />
+    <input type="file" name="image" accept=".jpg">
+  </p>
+  <input type="submit" value="Luo ilmoitus" />
+</form>
+{% endblock %}

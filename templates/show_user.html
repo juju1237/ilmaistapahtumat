@@ -1,35 +1,23 @@
-<!DOCTYPE html>
-<html>
+{% extends "layout.html" %}
 
-<head>
-  <title>Käyttäjä {{ user.username }} </title>
-</head>
+{% block title %}Käyttäjä {{ user.username }}{% endblock %}
 
-<body>
-  <h1>Käyttäjä {{ user.username }} </h1>
-  <p>
-    Käyttäjällä on yhteensä {{ events | count }} ilmoitusta
-  </p>
+{% block content %}
+<h2>Käyttäjä {{ user.username }}</h2>
+
+<p>Käyttäjällä on yhteensä {{ events | count }} ilmoitusta</p>
+
 <h2>Ilmoitukset</h2>
-  <ul>
-    {% for event in events %}
-      <li><a href="/event/{{ event.id }}">{{ event.title }}</a> - {{ event.date }}</li>
-    {% endfor %}
-  </ul>
+<ul>
+  {% for event in events %}
+  <li><a href="/event/{{ event.id }}">{{ event.title }}</a> - {{ event.date }}</li>
+  {% endfor %}
+</ul>
 
-  <h2>Käyttäjän lähettämät kommentit</h2>
-  <ul>
-    {% for comment in user_comments %}
-      <li><strong>{{ comment.title }}:</strong> {{ comment.comment }}</li>
-    {% endfor %}
-  </ul>
-
-  <form action="/" method="get">
-    <input type="submit" value="Etusivulle" />
-  </form>
- 
-  
-  </form>
-</body>
-
-</html>
+<h2>Käyttäjän lähettämät kommentit</h2>
+<ul>
+  {% for comment in user_comments %}
+  <li><strong>{{ comment.title }}:</strong> {{ comment.comment }}</li>
+  {% endfor %}
+</ul>
+{% endblock %}
