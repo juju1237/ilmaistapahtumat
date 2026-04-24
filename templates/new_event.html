@@ -56,6 +56,7 @@
       Lisää kuva (vain .jpg, max 100 KB): <br />
       <input type="file" name="image" accept=".jpg">
     </p>
+    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
     <input type="submit" value="Luo ilmoitus" />
   </form>
   <form action="/" method="get">

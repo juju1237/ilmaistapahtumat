@@ -77,6 +77,7 @@ def update_event(event_id):
             abort(403)
         return render_template("edit_event.html", event=event)
 
+    check_csrf()
     if request.method == "POST":
         event_id = request.form["event_id"]
         event = events.get_event(event_id)
@@ -128,6 +129,7 @@ def filled_event(title, description, date, time, location):
 @app.route("/create_event", methods=["POST"])
 def create_event():
     require_login()
+    check_csrf()
 
     title = request.form["title"]
     description = request.form["description"]
@@ -181,8 +183,8 @@ def remove_event(event_id):
     if request.method == "GET":
         return render_template("remove_event.html", event=event)
 
+    check_csrf()
     if request.method == "POST":
-        check_csrf()
         try:
             if "remove" in request.form:
                 events.remove_event(event_id)
@@ -249,6 +251,7 @@ def logout():
 @app.route("/add_comment/<int:event_id>", methods=["POST"])
 def add_comment(event_id):
     require_login()
+    check_csrf()
     comment = request.form["comment"]
     user_id = session["user_id"]
     comments.add_comment(event_id, user_id, comment)
