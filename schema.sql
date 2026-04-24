@@ -4,13 +4,14 @@ CREATE TABLE IF NOT EXISTS users (
     password_hash TEXT
 );
 
-CREATE TABLE events (
+CREATE TABLE IF NOT EXISTS events (
     id INTEGER PRIMARY KEY,
     title TEXT,
     description TEXT,
     date TEXT,
     time TEXT,
     location TEXT,
+    image BLOB,
     user_id INTEGER REFERENCES users
 );
 

@@ -14,8 +14,11 @@ def require_login():
         abort(403)
 
 def check_csrf():
-    if "csrf_token" not in request.form or request.form["csrf_token"] != session.get("csrf_token"):
+    if "csrf_token" not in request.form:
         abort(403)
+    if request.form["csrf_token"] != session.get("csrf_token"):
+        abort(403)
+
 
 def validate_event_data(title, description, time, date, location):
     if not title or len(title) > 60:
@@ -54,7 +57,7 @@ def find_event():
     return render_template("find_event.html", query=query, results=results)
 
 @app.route("/event/<int:event_id>")
-def page(event_id):
+def page(event_id): #show_event()
     event = events.get_event(event_id)
     if not event:
         abort(404)
@@ -101,7 +104,26 @@ def update_event(event_id):
 @app.route("/new_event")
 def new_event():
     require_login()
-    return render_template("new_event.html")
+    empty = {
+        "title": "",
+        "description": "",
+        "date": "",
+        "time": "",
+        "location": ""
+    }
+    return render_template("new_event.html", filled=empty)
+
+def filled_event(title, description, date, time, location):
+    filled = {
+        "title": title,
+        "description": description,
+        "date": date,
+        "time": time,
+        "location": location
+    }
+    return render_template("new_event.html", filled=filled)
+
+
 
 @app.route("/create_event", methods=["POST"])
 def create_event():
@@ -118,29 +140,29 @@ def create_event():
         date = datetime.strptime(date_raw, "%Y-%m-%d").strftime("%d.%m.%Y")
     except ValueError:
         flash("VIRHE: Päivämäärä ei ole oikeassa muodossa.")
-        return redirect("/new_event")
-
+        return filled_event(title, description, date_raw, time, location)
 
     image_blob = None
     if image and image.filename != "":
         if not image.filename.endswith(".jpg"):
             flash("VIRHE: Väärä tiedostotyyppi. Vain .jpg-tiedostot ovat sallittuja.")
-            return redirect("/new_event")
+            return filled_event(title, description, date, time, location)
 
         image_blob = image.read()
         if len(image_blob) > 100 * 1024:  # 100 KB max size
             flash("VIRHE: Liian suuri kuva. Maksimikoko on 100 KB.")
-            return redirect("/new_event")
+            return filled_event(title, description, date_raw, time, location)
+
 
     if validate_event_data(title, description, time, date, location):
         classes = request.form.getlist("section")
         user_id = session["user_id"]
-        events.add_event(title, description, date, time, location, user_id, classes, image_blob)
+        events.add_event(title, description, date_raw, time, location, user_id, classes, image_blob)
 
         return redirect("/")
     else:
         flash("VIRHE: Tarkista syötteesi. Varmista, että kaikki kentät ovat oikein.")
-        return redirect("/new_event")
+        return filled_event(title, description, date_raw, time, location)
 
 
 @app.route("/remove_event/<int:event_id>", methods=["GET", "POST"])
@@ -175,7 +197,7 @@ def remove_event(event_id):
 
 @app.route("/register")
 def register():
-    return render_template("register.html")
+    return render_template("register.html", filled={})
 
 @app.route("/create", methods=["POST"])
 def create():
@@ -184,21 +206,22 @@ def create():
     password2 = request.form["password2"]
     if password1 != password2:
         flash("VIRHE: salasanat eivät ole samat")
-        return redirect("/register")
+        filled = {"username": username}
+        return render_template("register.html", filled=filled)
 
     try:
         users.create_user(username, password1)
     except sqlite3.IntegrityError:
-        flash("VIRHE: tunnus on jo varattu")
-        return redirect("/register")
+        filled = {"username": username}
+        return render_template("register.html", filled=filled)
+
 
     return render_template("registration_success.html", username=username)
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "GET":
-        session["csrf_token"] = secrets.token_hex(16)
-        return render_template("login.html")
+        return render_template("login.html", filled={})
 
     if request.method == "POST":
         username = request.form["username"]
@@ -208,10 +231,12 @@ def login():
         if user_id:
             session["user_id"] = user_id
             session["username"] = username
+            session["csrf_token"] = secrets.token_hex(16)
             return redirect("/")
         else:
             flash("VIRHE: väärä tunnus tai salasana")
-            return redirect("/login")
+            filled = {"username": username}
+            return render_template("login.html", filled=filled)
 
 @app.route("/logout")
 def logout():
