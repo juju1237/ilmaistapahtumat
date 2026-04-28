@@ -1,3 +1,9 @@
+"""
+app.py: A Flask-based application for event management.
+Contains routes and actions for users and events.
+"""
+
+
 import sqlite3
 import secrets
 from datetime import datetime
@@ -12,13 +18,19 @@ import comments
 
 con = sqlite3.connect("database.db", timeout=10)
 app = Flask(__name__)
-app.secret_key = config.secret_key
+app.secret_key = config.SECRET_KEY
 
 def require_login():
+    """
+    Checks if the user is logged in. If not, returns an HTTP 403 error.
+    """
     if "user_id" not in session:
         abort(403)
 
 def check_csrf():
+    """
+    Checks for csrf. If it doesn't exist, returns an HTTP 403 error.
+    """
     if "csrf_token" not in request.form:
         abort(403)  # Token puuttuu
     if request.form["csrf_token"] != session.get("csrf_token"):
@@ -26,6 +38,9 @@ def check_csrf():
 
 
 def validate_event_data(title, description, date, location):
+    """
+    Checks if event data is validate. If not, returns False and user has to try again.
+    """
     if not title or len(title) > 60:
         return False
     if not description or len(description) > 5000:
@@ -44,6 +59,9 @@ def validate_event_data(title, description, date, location):
 
 
 def filled_event(title, description, date, time, location):
+    """
+    Fills event data from last insert. Returns new_evemt HTML.
+    """
     filled = {
         "title": title,
         "description": description,
@@ -56,28 +74,41 @@ def filled_event(title, description, date, time, location):
 
 @app.template_filter()
 def show_lines(content):
+    """
+    Allows line brekaks for inputs in event descriptions and comments.
+    """
     content = str(markupsafe.escape(content))
     content = content.replace("\n", "<br />")
     return markupsafe.Markup(content)
 
 @app.route("/")
 def index():
+    """
+    front page
+    """
     all_events = events.get_events()
     return render_template("index.html", events=all_events)
 
 @app.route("/user/<int:user_id>")
 def show_user(user_id):
+    """
+    Show user information
+    """
     user = users.get_user(user_id)
     if not user:
         abort(404)
-    events = users.get_events(user_id)
+    user_events = users.get_events(user_id)
     user_comments = users.get_user_comments(user_id)
 
-    return render_template("show_user.html", user=user, events=events, user_comments=user_comments)
+    return render_template("show_user.html", user=user, events=user_events, user_comments=user_comments)
 
 
 @app.route("/find_event")
 def find_event():
+    """
+    Function for finding events. Returns find_event html.
+    """
+
     query = request.args.get("query")
     if query:
         results = events.find_events(query)
@@ -88,6 +119,9 @@ def find_event():
 
 @app.route("/event/<int:event_id>")
 def page(event_id): #show_event()
+    """
+    Function for showing event page
+    """
     event = events.get_event(event_id)
     if not event:
         abort(404)
@@ -98,6 +132,9 @@ def page(event_id): #show_event()
 
 @app.route("/update_event/<int:event_id>", methods=["GET", "POST"])
 def update_event(event_id):
+    """
+    Function for updating event
+    """
     require_login()
     event = events.get_event(event_id)
     if request.method == "GET":
@@ -140,6 +177,7 @@ def update_event(event_id):
 
 @app.route("/new_event")
 def new_event():
+
     require_login()
     empty = {
         "title": "",
@@ -153,6 +191,9 @@ def new_event():
 
 @app.route("/create_event", methods=["POST"])
 def create_event():
+    """
+    Function for creating new event
+    """
     require_login()
     check_csrf()
 
@@ -194,6 +235,9 @@ def create_event():
 
 @app.route("/remove_event/<int:event_id>", methods=["GET", "POST"])
 def remove_event(event_id):
+    """
+    Function for removing event
+    """
     require_login()
     if "user_id" not in session:
         flash("Sinun täytyy olla kirjautuneena poistaaksesi tapahtumia.")
@@ -224,10 +268,16 @@ def remove_event(event_id):
 
 @app.route("/register")
 def register():
+    """
+    Function for registering new account if method is GET
+    """
     return render_template("register.html", filled={})
 
 @app.route("/create", methods=["POST"])
 def create():
+    """
+    Function for registering new account if method is POST
+    """
     username = request.form["username"]
     password1 = request.form["password1"]
     password2 = request.form["password2"]
@@ -239,6 +289,7 @@ def create():
     try:
         users.create_user(username, password1)
     except sqlite3.IntegrityError:
+        flash("Virhe tietokannan käsittelyssä.")
         filled = {"username": username}
         return render_template("register.html", filled=filled)
 
@@ -248,6 +299,10 @@ def create():
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
+    """
+    Function for logging in
+    """
+
     if request.method == "GET":
         next_page = request.args.get("next", request.referrer or "/")
         return render_template("login.html", filled={}, next_page=next_page)
@@ -270,7 +325,9 @@ def login():
 
 @app.route("/logout")
 def logout():
-    #require_login()
+    """
+    Function for logging out
+    """
     if "user_id" in session:
         del session["user_id"]
         del session["username"]
@@ -278,6 +335,10 @@ def logout():
 
 @app.route("/add_comment/<int:event_id>", methods=["POST"])
 def add_comment(event_id):
+    """
+    Function for adding comment to event
+    """
+
     if "user_id" not in session:
         flash("Sinun täytyy olla kirjautuneena kommentoidaksesi tapahtumia.")
         return redirect("/login")
@@ -290,6 +351,10 @@ def add_comment(event_id):
 
 @app.route("/add_event_image/<int:event_id>", methods=["GET", "POST"])
 def add_event_image(event_id):
+    """
+    Function for adding image to event
+    """
+
     require_login()
 
     event = events.get_event(event_id)
@@ -318,6 +383,10 @@ def add_event_image(event_id):
 
 @app.route("/image/<int:event_id>")
 def show_event_image(event_id):
+    """
+    Function for showing image in event post
+    """
+
     image = events.get_image(event_id)
     if not image:
         abort(404)
