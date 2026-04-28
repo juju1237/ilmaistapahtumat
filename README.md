@@ -7,8 +7,6 @@ Nykyiset toiminnot:
 * Käyttäjä näkee sovellukseen lisätyt ilmoitukset. Käyttäjä näkee sekä itse lisäämänsä että muiden käyttäjien lisäämät ilmoitukset.
 * Käyttäjä pystyy etsimään tietokohteita hakusanalla. Käyttäjä pystyy hakemaan sekä itse lisäämiään että muiden käyttäjien lisäämiä tietokohteita.
 * Käyttäjä pystyy valitsemaan ilmoitukselle yhden tai useamman luokittelun (esim. sijainti, kellonaika, päivämäärä).
-
-Tulevat toiminnot:
 * Sovelluksessa on käyttäjäsivut, jotka näyttävät jokaisesta käyttäjästä tilastoja ja käyttäjän lisäämät ilmoitukset.
 * Käyttäjä pystyy kommentoimaan omiin sekä muiden käyttäjien ilmoituksiin (esim. lisätietoa tapahtumasta, hype).
 
@@ -20,18 +18,21 @@ Näillä ohjeita voit ajaa sovelluksen omalla koneellasi.
 Varmista, että koneellesi on asennettu **Python 3**.
 
 2. Sovelluksen lataaminen
-Kloonaa projekti tai lataa se ZIP-tiedostona ja mene projektikansioon linux komentotulkilla:
+Kloonaa projekti:
+$ git clone https://github.com/juju1237/ilmaistapahtumat.git
+
+3. Mene projektikansioon linux komentotulkilla:
 $ cd ilmaistapahtumat
 
-3. Virtuaaliympäristön käynnistäminen
+4. Virtuaaliympäristön käynnistäminen
 $ python3 -m venv venv
 $ source venv/bin/activate
 
-4. Python kirjastojen paikallinen asennus
+5. Python kirjastojen paikallinen asennus
 $ pip install flask
 
-5. Tietokannan alustus
+6. Tietokannan alustus
 $ sqlite3 database.db < schema.sql
 
-6. Sovelluksen käynnistäminen:
+7. Sovelluksen käynnistäminen:
 $ flask run
