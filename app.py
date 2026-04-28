@@ -1,10 +1,14 @@
 import sqlite3
-from flask import Flask
-from flask import abort, make_response, redirect, render_template, request, session, flash
-import config, events, users, comments
 import secrets
 from datetime import datetime
+
+from flask import Flask, abort, make_response, redirect, render_template, request, session, flash
 import markupsafe
+
+import config
+import events
+import users
+import comments
 
 con = sqlite3.connect("database.db", timeout=10)
 app = Flask(__name__)
@@ -21,7 +25,7 @@ def check_csrf():
         abort(403)  # Token ei täsmää
 
 
-def validate_event_data(title, description, time, date, location):
+def validate_event_data(title, description, date, location):
     if not title or len(title) > 60:
         return False
     if not description or len(description) > 5000:
@@ -124,7 +128,7 @@ def update_event(event_id):
             flash("VIRHE: Päivämäärä ei ole oikeassa muodossa.")
             return redirect(f"/update_event/{event_id}")
 
-        if validate_event_data(title, description, time, date, location):
+        if validate_event_data(title, description, date, location):
             events.edit_event(event_id, title, description, date, time, location)
             events.update_classes(event_id, classes)  # Päivitetään luokat
 
@@ -177,7 +181,7 @@ def create_event():
             return filled_event(title, description, date_raw, time, location)
 
 
-    if validate_event_data(title, description, time, date, location):
+    if validate_event_data(title, description, date, location):
         classes = request.form.getlist("section")
         user_id = session["user_id"]
         events.add_event(title, description, date_raw, time, location, user_id, classes, image_blob)
@@ -304,7 +308,7 @@ def add_event_image(event_id):
             return redirect(f"/add_event_image/{event_id}")
 
         image_blob = file.read()
-        if len(image) > 100 * 1024:  # 100 KB max size
+        if len(image_blob) > 100 * 1024:  # 100 KB max size
             flash("VIRHE: liian suuri kuva. Maksimikoko on 100 KB.")
             return redirect(f"/add_event_image/{event_id}")
 

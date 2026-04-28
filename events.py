@@ -1,7 +1,15 @@
 import db
 
 def add_event(title, description, date, time, location, user_id, classes, image_blob=None):
-    sql = "INSERT INTO events (title, description, date, time, location, user_id, image) VALUES (?, ?, ?, ?, ?, ?, ?)"
+    sql = """INSERT INTO events
+    (title,
+    description,
+    date,
+    time,
+    location,
+    user_id,
+    image)
+    VALUES (?, ?, ?, ?, ?, ?, ?)"""
     db.execute(sql, [title, description, date, time, location, user_id, image_blob])
 
     event_id = db.last_insert_id()
