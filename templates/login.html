@@ -7,7 +7,11 @@
 
 <form action="/login" method="post">
   <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-  <input type="hidden" name="next_page" value="{{ request.args.get('next', '/') }}" />
+  {% if next_page %}
+  <input type="hidden" name="next_page" value="{{ next_page }}" />
+  {% else %}
+  <input type="hidden" name="next_page" value="/" />
+  {% endif %}
   <p>
     <label for="username">Tunnus:</label> <br />
     <input type="text" id="username" name="username" />

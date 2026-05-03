@@ -20,7 +20,7 @@ from flask import g
 import time
 
 
-con = sqlite3.connect("database.db", timeout=10)
+#con = sqlite3.connect("database.db", timeout=10)
 app = Flask(__name__)
 app.secret_key = config.SECRET_KEY
 
@@ -399,7 +399,8 @@ def add_comment(event_id):
 
     if "user_id" not in session:
         flash("Sinun täytyy olla kirjautuneena kommentoidaksesi tapahtumia.")
-        return redirect("/login")
+        return redirect(f"/login?next=/event/{event_id}")
+
     require_login()
     check_csrf()
     comment = request.form["comment"]

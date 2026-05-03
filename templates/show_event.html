@@ -42,10 +42,16 @@
   {% endfor %}
 </ul>
 
+{% if not session.user_id %}
+<p>
+  <a href="/login?next={{ request.path }}">Kirjaudu sisään lähettääksesi kommentin</a>
+</p>
+{% else %}
 <form action="/add_comment/{{ event.id }}" method="POST">
   <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
   <textarea name="comment" rows="3" cols="50" required></textarea>
-  <input type="submit" value="Lisää kommentti">
+  <input type="submit" value="Lähetä komentti">
 </form>
+{% endif %}
 {% endblock %}
 

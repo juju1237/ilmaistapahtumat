@@ -21,7 +21,7 @@ def get_connection():
         sqlite3.Connection: A connection object to interact with the database.
     """
 
-    con = sqlite3.connect("database.db")
+    con = sqlite3.connect("database.db", timeout=20)
     con.execute("PRAGMA foreign_keys = ON")
     con.row_factory = sqlite3.Row
     return con
