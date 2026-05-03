@@ -13,26 +13,26 @@
 
 <form action="/update_event/{{ event.id }}" method="POST">
   <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-  <p>
-    Otsikko: <br />
-    <input type="text" name="title" size="50" value="{{ event.title }}" maxlength="60" required />
-  </p>
-  <p>
-    Kuvaus: <br />
-    <textarea name="description" rows="10" cols="70" maxlength="1500" required>{{ event.description }}</textarea>
-  </p>
-  <p>
-    Päivämäärä (dd.mm.yyyy): <br />
-    <input type="date" name="date" size="10" value="{{ event.date }}" />
-  </p>
-  <p>
-    Kellonaika: <br />
-    Klo <input type="text" name="time" size="6" value="{{ event.time }}" />
-  </p>
-  <p>
-    Sijainti: <br />
-    <input type="text" name="location" size="20" value="{{ event.location }}" maxlength="100" required />
-  </p>
+<p>
+  <label for="title">Otsikko:</label> <br />
+  <input type="text" id="title" name="title" size="50" value="{{ event.title }}" maxlength="60" required />
+</p>
+<p>
+  <label for="description">Kuvaus:</label> <br />
+  <textarea id="description" name="description" rows="10" cols="70" maxlength="1500" required>{{ event.description }}</textarea>
+</p>
+<p>
+  <label for="date">Päivämäärä (dd.mm.yyyy):</label> <br />
+  <input type="date" id="date" name="date" size="10" value="{{ event.date }}" />
+</p>
+<p>
+  <label for="time">Kellonaika:</label> <br />
+  Klo <input type="text" id="time" name="time" size="6" value="{{ event.time }}" />
+</p>
+<p>
+  <label for="location">Sijainti:</label> <br />
+  <input type="text" id="location" name="location" size="20" value="{{ event.location }}" maxlength="100" required />
+</p>
   <p>
     Tapahtuman tyyppi: <br />
     <select name="section" multiple>

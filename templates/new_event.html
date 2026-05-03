@@ -13,26 +13,26 @@
 
 <form action="/create_event" method="post" enctype="multipart/form-data">
   <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-  <p>
-    Otsikko: <br />
-    <input type="text" name="title" value="{{ filled.title }}" size="50" maxlength="60" required />
-  </p>
-  <p>
-    Kuvaus: <br />
-    <textarea name="description" rows="10" cols="70" maxlength="5000" required>{{ filled.description | show_lines }}</textarea>
-  </p>
-  <p>
-    Päivämäärä: <br />
-    <input type="date" name="date" value="{{ filled.date }}" size="10" required />
-  </p>
-  <p>
-    Kellonaika: <br />
-    Klo <input type="time" name="time" value="{{ filled.time }}" size="8" required />
-  </p>
-  <p>
-    Sijainti: <br />
-    <input type="text" name="location" value="{{ filled.location }}" size="50" maxlength="100" required />
-  </p>
+<p>
+  <label for="title">Otsikko:</label> <br />
+  <input type="text" id="title" name="title" value="{{ filled.title }}" size="50" maxlength="60" required />
+</p>
+<p>
+  <label for="description">Kuvaus:</label> <br />
+  <textarea id="description" name="description" rows="10" cols="70" maxlength="5000" required>{{ filled.description | show_lines }}</textarea>
+</p>
+<p>
+  <label for="date">Päivämäärä:</label> <br />
+  <input type="date" id="date" name="date" value="{{ filled.date }}" size="10" required />
+</p>
+<p>
+  <label for="time">Kellonaika:</label> <br />
+  Klo <input type="time" id="time" name="time" value="{{ filled.time }}" size="8" required />
+</p>
+<p>
+  <label for="location">Sijainti:</label> <br />
+  <input type="text" id="location" name="location" value="{{ filled.location }}" size="50" maxlength="100" required />
+</p>
   <p>
     Tapahtuman tyyppi: <br />
     <select name="section" multiple>
