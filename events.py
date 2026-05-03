@@ -103,7 +103,13 @@ def edit_event(event_id, title, description, date, time, location, image_blob=No
     """
 
     if image_blob:
-        sql = """UPDATE events SET title = ?, description = ?, date = ?, time = ?, location = ?, image = ?
+        sql = """UPDATE events
+                 SET title = ?,
+                 description = ?,
+                 date = ?,
+                 time = ?,
+                 location = ?,
+                 image = ?
                  WHERE id = ?"""
         db.execute(sql, [title, description, date, time, location, image_blob, event_id])
     else:
@@ -194,6 +200,9 @@ def get_image(event_id):
     return result[0][0] if result else None
 
 def get_events_with_pagination(offset, page_size):
+    """
+    Gets specific amount ov events fo one page
+    """
     sql = """SELECT id, title, date, location
              FROM events
              ORDER BY id DESC
@@ -201,6 +210,9 @@ def get_events_with_pagination(offset, page_size):
     return db.query(sql, [page_size, offset])
 
 def event_count():
+    """
+    Needed for pagination
+    """
     sql = "SELECT COUNT(*) FROM events"
     result = db.query(sql)
     return result[0][0] if result else 0

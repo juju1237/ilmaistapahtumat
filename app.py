@@ -2,13 +2,15 @@
 app.py: A Flask-based application for event management.
 Contains routes and actions for users and events.
 """
+import math
+import time
 
 
 import sqlite3
 import secrets
 from datetime import datetime
 
-from flask import Flask, abort, make_response, redirect, render_template, request, session, flash
+from flask import Flask, abort, make_response, redirect, render_template, request, session, flash, g
 import markupsafe
 
 import config
@@ -16,21 +18,23 @@ import events
 import users
 import comments
 
-from flask import g
-import time
 
-
-#con = sqlite3.connect("database.db", timeout=10)
 app = Flask(__name__)
 app.secret_key = config.SECRET_KEY
 
 
 @app.before_request
 def before_request():
+    """
+    Starting time for efficiency test
+    """
     g.start_time = time.time()
 
 @app.after_request
 def after_request(response):
+    """
+    Ending time for efficiency test
+    """
     elapsed_time = round(time.time() - g.start_time, 2)
     print("elapsed time:", elapsed_time, "s")
     return response
@@ -75,7 +79,7 @@ def validate_event_data(title, description, date, location):
     return True
 
 
-def filled_event(title, description, date, time, location):
+def filled_event(title, description, date, event_time, location):
     """
     Fills event data from last insert. Returns new_evemt HTML.
     """
@@ -83,7 +87,7 @@ def filled_event(title, description, date, time, location):
         "title": title,
         "description": description,
         "date": date,
-        "time": time,
+        "time": event_time,
         "location": location
     }
     return render_template("new_event.html", filled=filled)
@@ -98,9 +102,6 @@ def show_lines(content):
     content = content.replace("\n", "<br />")
     return markupsafe.Markup(content)
 
-
-import math
-import events
 
 @app.route("/")
 @app.route("/page/<int:page>")
@@ -145,7 +146,7 @@ def show_user(user_id):
     user_events = users.get_events(user_id)
     user_comments = users.get_user_comments(user_id)
 
-    return render_template("show_user.html", 
+    return render_template("show_user.html",
                            user=user, events=user_events, user_comments=user_comments)
 
 
@@ -164,7 +165,7 @@ def find_event():
     return render_template("find_event.html", query=query, results=results)
 
 @app.route("/event/<int:event_id>")
-def page(event_id): #show_event()
+def show_event(event_id):
     """
     Function for showing event page
     """
@@ -200,7 +201,7 @@ def update_event(event_id):
             abort(403)
         title = request.form["title"]
         description = request.form["description"]
-        time = request.form["time"]
+        event_time = request.form["time"]
         date_raw = request.form["date"]
         location = request.form["location"]
         classes = request.form.getlist("section")
@@ -224,7 +225,7 @@ def update_event(event_id):
             return redirect(f"/update_event/{event_id}")
 
         if validate_event_data(title, description, date, location):
-            events.edit_event(event_id, title, description, date, time, location, image_blob)
+            events.edit_event(event_id, title, description, date, event_time, location, image_blob)
             events.update_classes(event_id, classes)
 
             flash("Tapahtuma päivitetty onnistuneesti.")
@@ -243,7 +244,7 @@ def new_event():
         "title": "",
         "description": "",
         "date": "",
-        "time": "",
+        "event_time": "",
         "location": ""
     }
     return render_template("new_event.html", filled=empty)
@@ -259,7 +260,7 @@ def create_event():
 
     title = request.form["title"]
     description = request.form["description"]
-    time = request.form["time"]
+    event_time = request.form["time"]
     date_raw = request.form["date"]
     location = request.form["location"]
     image = request.files.get("image")
@@ -268,29 +269,30 @@ def create_event():
         date = datetime.strptime(date_raw, "%Y-%m-%d").strftime("%d.%m.%Y")
     except ValueError:
         flash("VIRHE: Päivämäärä ei ole oikeassa muodossa.")
-        return filled_event(title, description, date_raw, time, location)
+        return filled_event(title, description, date_raw, event_time, location)
 
     image_blob = None
     if image and image.filename != "":
         if not image.filename.endswith(".jpg"):
             flash("VIRHE: Väärä tiedostotyyppi. Vain .jpg-tiedostot ovat sallittuja.")
-            return filled_event(title, description, date, time, location)
+            return filled_event(title, description, date, event_time, location)
 
         image_blob = image.read()
         if len(image_blob) > 100 * 1024:  # 100 KB max size
             flash("VIRHE: Liian suuri kuva. Maksimikoko on 100 KB.")
-            return filled_event(title, description, date_raw, time, location)
+            return filled_event(title, description, date_raw, event_time, location)
 
 
     if validate_event_data(title, description, date, location):
         classes = request.form.getlist("section")
         user_id = session["user_id"]
-        events.add_event(title, description, date_raw, time, location, user_id, classes, image_blob)
+        events.add_event(title, description, date_raw, event_time,
+                         location, user_id, classes, image_blob)
 
         return redirect("/")
     else:
         flash("VIRHE: Tarkista syötteesi. Varmista, että kaikki kentät ovat oikein.")
-        return filled_event(title, description, date_raw, time, location)
+        return filled_event(title, description, date_raw, event_time, location)
 
 
 @app.route("/remove_event/<int:event_id>", methods=["GET", "POST"])
@@ -321,7 +323,8 @@ def remove_event(event_id):
                 return redirect("/")
             else:
                 return redirect("/event/" + str(event_id))
-        except Exception:
+        except sqlite3.Error as e:
+            print(f"debug: tapahtui virhe {e}")
             flash("Tapahtuman poistamisessa tapahtui virhe.")
             return redirect("/event/" + str(event_id))
 
