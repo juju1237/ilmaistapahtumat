@@ -45,8 +45,8 @@ Kloonaa projekti:
 		$ flask run
 
 
-Testaukset suurella tietomäärällä:
-
+**Testaukset suurella tietomäärällä:
+**
 TIKAWE kurssin materiaalien mukaan ja curre chatin avulla loin seed.py tiedoston joka vastaa kurssin tyyliä mutta soveltuu sovellukseeni.
 Lisäsin ajanottoon tarvittavat rivit app.py tiedostoon ja loin sivunvaihdot.
 
@@ -64,116 +64,38 @@ Haku:
 * Tapahtumien hakeminen hakusanalla toimii myös normaalisti
 
 
-En vielä ole indeksoinut tietokantaa mutta tässä on terminaaliin tulostuvat rivit:
-	
-	Running on http://127.0.0.1:5000
-	
-	Press CTRL+C to quit
-	
-	elapsed time: 0.02 s
-	
-	127.0.0.1 - - [28/Apr/2026 16:13:39] "GET / HTTP/1.1" 200 -
-	
-	elapsed time: 0.01 s
-	
-	127.0.0.1 - - [28/Apr/2026 16:13:39] "GET /static/main.css HTTP/1.1" 304 -
-	
-	elapsed time: 0.07 s
-	
-	127.0.0.1 - - [28/Apr/2026 16:13:45] "GET /event/9991 HTTP/1.1" 200 -
-	
-	elapsed time: 0.0 s
-	
-	127.0.0.1 - - [28/Apr/2026 16:13:45] "GET /static/main.css HTTP/1.1" 304 -
-	
-	elapsed time: 0.14 s
-	
-	127.0.0.1 - - [28/Apr/2026 16:13:48] "GET /user/532 HTTP/1.1" 200 -
-	
-	elapsed time: 0.0 s
-	
-	127.0.0.1 - - [28/Apr/2026 16:13:48] "GET /static/main.css HTTP/1.1" 304 -
-	
-	elapsed time: 0.05 s
-	
-	127.0.0.1 - - [28/Apr/2026 16:13:54] "GET /event/6023 HTTP/1.1" 200 -
-	
-	elapsed time: 0.0 s
-	
-	127.0.0.1 - - [28/Apr/2026 16:13:54] "GET /static/main.css HTTP/1.1" 304 -
-	
-	elapsed time: 0.0 s
-	
-	127.0.0.1 - - [28/Apr/2026 16:13:55] "GET / HTTP/1.1" 200 -
-	
-	elapsed time: 0.0 s
-	
-	127.0.0.1 - - [28/Apr/2026 16:13:55] "GET /static/main.css HTTP/1.1" 304 -
-	
-	elapsed time: 0.05 s
-	
-	127.0.0.1 - - [28/Apr/2026 16:13:56] "GET /event/9999 HTTP/1.1" 200 -
-	
-	elapsed time: 0.0 s
-	
-	127.0.0.1 - - [28/Apr/2026 16:13:56] "GET /static/main.css HTTP/1.1" 304 -
-	
-	elapsed time: 0.01 s
-	
-	127.0.0.1 - - [28/Apr/2026 16:13:58] "GET /new_event HTTP/1.1" 200 -
-	
-	elapsed time: 0.0 s
-	
-	127.0.0.1 - - [28/Apr/2026 16:13:58] "GET /static/main.css HTTP/1.1" 304 -
-	
-	elapsed time: 0.06 s
-	
-	127.0.0.1 - - [28/Apr/2026 16:14:08] "POST /create_event HTTP/1.1" 302 -
-	
-	elapsed time: 0.0 s
-	
-	127.0.0.1 - - [28/Apr/2026 16:14:08] "GET / HTTP/1.1" 200 -
-	
-	elapsed time: 0.0 s
-	
-	127.0.0.1 - - [28/Apr/2026 16:14:08] "GET /static/main.css HTTP/1.1" 304 -
-	
-	elapsed time: 0.0 s
-	
-	127.0.0.1 - - [28/Apr/2026 16:14:18] "GET /logout HTTP/1.1" 302 -
-	
-	elapsed time: 0.0 s
+Ennen indeksointia terminaaliin tulostuvat rivit:
 
- * Running on http://127.0.0.1:5000
-    Press CTRL+C to quit
-    elapsed time: 0.02 s
-    127.0.0.1 - - [28/Apr/2026 16:13:39] "GET / HTTP/1.1" 200 -
-    elapsed time: 0.01 s
-    127.0.0.1 - - [28/Apr/2026 16:13:39] "GET /static/main.css HTTP/1.1" 304 -
-    elapsed time: 0.07 s
-    127.0.0.1 - - [28/Apr/2026 16:13:45] "GET /event/9991 HTTP/1.1" 200 -
-    elapsed time: 0.0 s
-    127.0.0.1 - - [28/Apr/2026 16:13:45] "GET /static/main.css HTTP/1.1" 304 -
-    elapsed time: 0.14 s
-    127.0.0.1 - - [28/Apr/2026 16:13:48] "GET /user/532 HTTP/1.1" 200 -
-    elapsed time: 0.0 s
-    127.0.0.1 - - [28/Apr/2026 16:13:48] "GET /static/main.css HTTP/1.1" 304 -
-    elapsed time: 0.05 s
-    127.0.0.1 - - [28/Apr/2026 16:13:54] "GET /event/6023 HTTP/1.1" 200 -
-    elapsed time: 0.0 s
-    127.0.0.1 - - [28/Apr/2026 16:13:54] "GET /static/main.css HTTP/1.1" 304 -
-    elapsed time: 0.0 s
-    127.0.0.1 - - [28/Apr/2026 16:13:55] "GET / HTTP/1.1" 200 -
-    elapsed time: 0.0 s
-    127.0.0.1 - - [28/Apr/2026 16:13:55] "GET /static/main.css HTTP/1.1" 304 -
-    elapsed time: 0.05 s
-    127.0.0.1 - - [28/Apr/2026 16:13:56] "GET /event/9999 HTTP/1.1" 200 -
-    elapsed time: 0.0 s
-    127.0.0.1 - - [28/Apr/2026 16:13:56] "GET /static/main.css HTTP/1.1" 304 -
-    elapsed time: 0.01 s
-    127.0.0.1 - - [28/Apr/2026 16:13:58] "GET /new_event HTTP/1.1" 200 -
-    elapsed time: 0.0 s
-    127.0.0.1 - - [28/Apr/2026 16:13:58] "GET /static/main.css HTTP/1.1" 304 
+	 * Running on http://127.0.0.1:5000
+	    Press CTRL+C to quit
+	    elapsed time: 0.02 s
+	    127.0.0.1 - - [28/Apr/2026 16:13:39] "GET / HTTP/1.1" 200 -
+	    elapsed time: 0.01 s
+	    127.0.0.1 - - [28/Apr/2026 16:13:39] "GET /static/main.css HTTP/1.1" 304 -
+	    elapsed time: 0.07 s
+	    127.0.0.1 - - [28/Apr/2026 16:13:45] "GET /event/9991 HTTP/1.1" 200 -
+	    elapsed time: 0.0 s
+	    127.0.0.1 - - [28/Apr/2026 16:13:45] "GET /static/main.css HTTP/1.1" 304 -
+	    elapsed time: 0.14 s
+	    127.0.0.1 - - [28/Apr/2026 16:13:48] "GET /user/532 HTTP/1.1" 200 -
+	    elapsed time: 0.0 s
+	    127.0.0.1 - - [28/Apr/2026 16:13:48] "GET /static/main.css HTTP/1.1" 304 -
+	    elapsed time: 0.05 s
+	    127.0.0.1 - - [28/Apr/2026 16:13:54] "GET /event/6023 HTTP/1.1" 200 -
+	    elapsed time: 0.0 s
+	    127.0.0.1 - - [28/Apr/2026 16:13:54] "GET /static/main.css HTTP/1.1" 304 -
+	    elapsed time: 0.0 s
+	    127.0.0.1 - - [28/Apr/2026 16:13:55] "GET / HTTP/1.1" 200 -
+	    elapsed time: 0.0 s
+	    127.0.0.1 - - [28/Apr/2026 16:13:55] "GET /static/main.css HTTP/1.1" 304 -
+	    elapsed time: 0.05 s
+	    127.0.0.1 - - [28/Apr/2026 16:13:56] "GET /event/9999 HTTP/1.1" 200 -
+	    elapsed time: 0.0 s
+	    127.0.0.1 - - [28/Apr/2026 16:13:56] "GET /static/main.css HTTP/1.1" 304 -
+	    elapsed time: 0.01 s
+	    127.0.0.1 - - [28/Apr/2026 16:13:58] "GET /new_event HTTP/1.1" 200 -
+	    elapsed time: 0.0 s
+	    127.0.0.1 - - [28/Apr/2026 16:13:58] "GET /static/main.css HTTP/1.1" 304
 
 Siis sovellus toimii hyvin ja nopeasti vaikka tietomäärä on erittäin suuri.
 
@@ -225,16 +147,16 @@ Indeksien lisäämisen jälkeen ajat näyttävät seuraavalta:
     elapsed time: 0.0 s
     127.0.0.1 - - [28/Apr/2026 16:35:25] "GET /static/main.css HTTP/1.1" 304 -
 
-    Ajat siis hieman lyhenivät vielä mutta ero ei ole suuri. Tämä luultavasti johtuu siitä että lisäsin sivunvaihdot suoraan enkä testannut aikoja ja tehokkuutta ilman sivuttamista.
+Ajat siis hieman lyhenivät vielä mutta ero ei ole suuri. Tämä luultavasti johtuu siitä että lisäsin sivunvaihdot suoraan enkä testannut aikoja ja tehokkuutta ilman sivuttamista.
 
-    Seuraavaksi poistin indeksit schema.sql:stä ja poistin database.db:n, jonka jälkeen lisäsin scheman takaisin database.db. Tämän jälkeen muutin testidataa näin:
+Seuraavaksi poistin indeksit schema.sql:stä ja poistin database.db:n, jonka jälkeen lisäsin scheman takaisin database.db. Tämän jälkeen muutin testidataa näin:
 
     user_count = 10**6
     event_count = 10**6
     class_count = 10**6
     comment_count = 10**6
 
-    Sitten ajat näyttivät seuraavilta kun testailin käydä tapahtumailmoituksissa ja lähettää kommentteja ja käydä käyttäjän profiilissa:
+Sitten ajat näyttivät seuraavilta kun testailin käydä tapahtumailmoituksissa ja lähettää kommentteja ja käydä käyttäjän profiilissa:
 
     elapsed time: 0.17 s
     127.0.0.1 - - [03/May/2026 11:47:16] "GET /event/1000000 HTTP/1.1" 200 -
