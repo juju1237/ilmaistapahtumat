@@ -35,24 +35,6 @@ def after_request(response):
     print("elapsed time:", elapsed_time, "s")
     return response
 
-def ensure_indexes():
-    """
-    Checks if there are indexes in database. If not, creates them.
-    """
-    db = sqlite3.connect("database.db")
-    db.execute("CREATE INDEX IF NOT EXISTS idx_events_user_id ON events (user_id);")
-    db.execute("CREATE INDEX IF NOT EXISTS idx_events_date ON events (date);")
-    db.execute("CREATE INDEX IF NOT EXISTS idx_events_id ON events (id);")
-    db.execute("CREATE INDEX IF NOT EXISTS idx_event_classes_event_id ON event_classes (event_id);")
-    db.execute("CREATE INDEX IF NOT EXISTS idx_comments_event_id ON comments (event_id);")
-    db.execute("CREATE INDEX IF NOT EXISTS idx_comments_user_id ON comments (user_id);")
-    db.execute("CREATE INDEX IF NOT EXISTS idx_users_id ON users (id);")
-    db.execute("CREATE INDEX IF NOT EXISTS idx_users_username ON users (username);")
-    db.commit()
-    db.close()
-
-ensure_indexes()
-
 
 
 def require_login():

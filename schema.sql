@@ -28,3 +28,12 @@ CREATE TABLE IF NOT EXISTS comments (
     comment TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE INDEX IF NOT EXISTS idx_events_user_id ON events (user_id);
+CREATE INDEX IF NOT EXISTS idx_events_date ON events (date);
+CREATE INDEX IF NOT EXISTS idx_events_id ON events (id);
+CREATE INDEX IF NOT EXISTS idx_event_classes_event_id ON event_classes (event_id);
+CREATE INDEX IF NOT EXISTS idx_comments_event_id ON comments (event_id);
+CREATE INDEX IF NOT EXISTS idx_comments_user_id ON comments (user_id);
+CREATE INDEX IF NOT EXISTS idx_users_id ON users (id);
+CREATE INDEX IF NOT EXISTS idx_users_username ON users (username);

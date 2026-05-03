@@ -88,42 +88,22 @@ elapsed time: 0.0 s
 elapsed time: 0.01 s
 127.0.0.1 - - [28/Apr/2026 16:13:58] "GET /new_event HTTP/1.1" 200 -
 elapsed time: 0.0 s
-127.0.0.1 - - [28/Apr/2026 16:13:58] "GET /static/main.css HTTP/1.1" 304 -
-elapsed time: 0.06 s
-127.0.0.1 - - [28/Apr/2026 16:14:08] "POST /create_event HTTP/1.1" 302 -
-elapsed time: 0.0 s
-127.0.0.1 - - [28/Apr/2026 16:14:08] "GET / HTTP/1.1" 200 -
-elapsed time: 0.0 s
-127.0.0.1 - - [28/Apr/2026 16:14:08] "GET /static/main.css HTTP/1.1" 304 -
-elapsed time: 0.0 s
-127.0.0.1 - - [28/Apr/2026 16:14:18] "GET /logout HTTP/1.1" 302 -
-elapsed time: 0.0 s
-
+127.0.0.1 - - [28/Apr/2026 16:13:58] "GET /static/main.css HTTP/1.1" 304 
 
 Siis sovellus toimii hyvin ja nopeasti vaikka tietomäärä on erittäin suuri.
 
 
-Seuraavaksi lisäsin indeksit suoraan sovellukseen koodilla
+Seuraavaksi lisäsin indeksit schema.sql:ään koodilla
 
 
-def ensure_indexes():
-    """
-    Checks if there are indexes in database. If not, creates them.
-    """
-    db = sqlite3.connect("database.db")
-    db.execute("CREATE INDEX IF NOT EXISTS idx_events_user_id ON events (user_id);")
-    db.execute("CREATE INDEX IF NOT EXISTS idx_events_date ON events (date);")
-    db.execute("CREATE INDEX IF NOT EXISTS idx_events_id ON events (id);")
-    db.execute("CREATE INDEX IF NOT EXISTS idx_event_classes_event_id ON event_classes (event_id);")
-    db.execute("CREATE INDEX IF NOT EXISTS idx_comments_event_id ON comments (event_id);")
-    db.execute("CREATE INDEX IF NOT EXISTS idx_comments_user_id ON comments (user_id);")
-    db.execute("CREATE INDEX IF NOT EXISTS idx_users_id ON users (id);")
-    db.execute("CREATE INDEX IF NOT EXISTS idx_users_username ON users (username);")
-    db.commit()
-    db.close()
-
-
-ensure_indexes()
+CREATE INDEX IF NOT EXISTS idx_events_user_id ON events (user_id);
+CREATE INDEX IF NOT EXISTS idx_events_date ON events (date);
+CREATE INDEX IF NOT EXISTS idx_events_id ON events (id);
+CREATE INDEX IF NOT EXISTS idx_event_classes_event_id ON event_classes (event_id);
+CREATE INDEX IF NOT EXISTS idx_comments_event_id ON comments (event_id);
+CREATE INDEX IF NOT EXISTS idx_comments_user_id ON comments (user_id);
+CREATE INDEX IF NOT EXISTS idx_users_id ON users (id);
+CREATE INDEX IF NOT EXISTS idx_users_username ON users (username);
 
 
 Indeksien lisäämisen jälkeen ajat näyttävät seuraavalta:
@@ -157,13 +137,76 @@ elapsed time: 0.01 s
 127.0.0.1 - - [28/Apr/2026 16:35:25] "GET /event/2072 HTTP/1.1" 200 -
 elapsed time: 0.0 s
 127.0.0.1 - - [28/Apr/2026 16:35:25] "GET /static/main.css HTTP/1.1" 304 -
-elapsed time: 0.01 s
-127.0.0.1 - - [28/Apr/2026 16:35:26] "GET /user/650 HTTP/1.1" 200 -
-elapsed time: 0.0 s
-127.0.0.1 - - [28/Apr/2026 16:35:26] "GET /static/main.css HTTP/1.1" 304 -
-elapsed time: 0.0 s
-127.0.0.1 - - [28/Apr/2026 16:35:27] "GET /event/8472 HTTP/1.1" 200 -
-elapsed time: 0.0 s
-
 
 Ajat siis hieman lyhenivät vielä mutta ero ei ole suuri. Tämä luultavasti johtuu siitä että lisäsin sivunvaihdot suoraan enkä testannut aikoja ja tehokkuutta ilman sivuttamista.
+
+Seuraavaksi poistin indeksit schema.sql:stä ja poistin database.db:n, jonka jälkeen lisäsin scheman takaisin database.db. Tämän jälkeen muutin testidataa näin:
+
+user_count = 10**6
+event_count = 10**6
+class_count = 10**6
+comment_count = 10**6
+
+Sitten ajat näyttivät seuraavilta kun testailin käydä tapahtumailmoituksissa ja lähettää kommentteja ja käydä käyttäjän profiilissa:
+
+elapsed time: 0.17 s
+127.0.0.1 - - [03/May/2026 11:47:16] "GET /event/1000000 HTTP/1.1" 200 -
+elapsed time: 0.0 s
+127.0.0.1 - - [03/May/2026 11:47:16] "GET /static/main.css HTTP/1.1" 304 -
+elapsed time: 0.22 s
+127.0.0.1 - - [03/May/2026 11:47:19] "GET /user/165143 HTTP/1.1" 200 -
+elapsed time: 0.19 s
+127.0.0.1 - - [03/May/2026 11:47:19] "GET /user/165143 HTTP/1.1" 200 -
+elapsed time: 0.0 s
+127.0.0.1 - - [03/May/2026 11:47:19] "GET /static/main.css HTTP/1.1" 304 -
+elapsed time: 0.17 s
+127.0.0.1 - - [03/May/2026 11:47:25] "GET /event/767957 HTTP/1.1" 200 -
+elapsed time: 0.0 s
+127.0.0.1 - - [03/May/2026 11:47:25] "GET /static/main.css HTTP/1.1" 304 -
+elapsed time: 0.05 s
+127.0.0.1 - - [03/May/2026 11:47:29] "POST /add_comment/767957 HTTP/1.1" 302 -
+elapsed time: 0.16 s
+127.0.0.1 - - [03/May/2026 11:47:30] "GET /event/767957 HTTP/1.1" 200 -
+elapsed time: 0.0 s
+127.0.0.1 - - [03/May/2026 11:47:30] "GET /static/main.css HTTP/1.1" 304 -
+elapsed time: 0.06 s
+127.0.0.1 - - [03/May/2026 11:47:35] "GET / HTTP/1.1" 200 -
+elapsed time: 0.0 s
+127.0.0.1 - - [03/May/2026 11:47:35] "GET /static/main.css HTTP/1.1" 304 -
+
+Sovellus toimii yhä tehokkaasti vaikka datan määrä on erittäin suuri. Tapahtumailmoituksen tarkastelu vaikuttaa vievän eniten aikaa.
+
+Tämän jälkeen lisäsin indeksit uudestaan ja ajat näyttävät tältä
+
+elapsed time: 0.98 s
+127.0.0.1 - - [03/May/2026 12:05:08] "GET /page/5 HTTP/1.1" 200 -
+elapsed time: 0.05 s
+127.0.0.1 - - [03/May/2026 12:05:08] "GET /static/main.css HTTP/1.1" 304 -
+elapsed time: 0.05 s
+127.0.0.1 - - [03/May/2026 12:05:12] "GET /event/999959 HTTP/1.1" 200 -
+elapsed time: 0.0 s
+127.0.0.1 - - [03/May/2026 12:05:12] "GET /static/main.css HTTP/1.1" 304 -
+elapsed time: 0.05 s
+127.0.0.1 - - [03/May/2026 12:05:15] "GET /user/454210 HTTP/1.1" 200 -
+elapsed time: 0.0 s
+127.0.0.1 - - [03/May/2026 12:05:15] "GET /static/main.css HTTP/1.1" 304 -
+elapsed time: 0.03 s
+127.0.0.1 - - [03/May/2026 12:05:18] "GET / HTTP/1.1" 200 -
+elapsed time: 0.0 s
+127.0.0.1 - - [03/May/2026 12:05:18] "GET /static/main.css HTTP/1.1" 304 -
+elapsed time: 0.02 s
+127.0.0.1 - - [03/May/2026 12:05:20] "GET /page/2 HTTP/1.1" 200 -
+elapsed time: 0.0 s
+127.0.0.1 - - [03/May/2026 12:05:20] "GET /static/main.css HTTP/1.1" 304 -
+elapsed time: 0.05 s
+127.0.0.1 - - [03/May/2026 12:05:24] "GET /event/999985 HTTP/1.1" 200 -
+elapsed time: 0.0 s
+127.0.0.1 - - [03/May/2026 12:05:24] "GET /static/main.css HTTP/1.1" 304 -
+elapsed time: 0.0 s
+127.0.0.1 - - [03/May/2026 12:05:29] "GET /logout HTTP/1.1" 302 -
+elapsed time: 0.01 s
+127.0.0.1 - - [03/May/2026 12:05:29] "GET / HTTP/1.1" 200 -
+elapsed time: 0.0 s
+127.0.0.1 - - [03/May/2026 12:05:30] "GET /static/main.css HTTP/1.1" 304 
+
+Nyt vain sivun lataaminen vei melkein sekunnin mutta kaikki muut ajat ovat pieniä.
