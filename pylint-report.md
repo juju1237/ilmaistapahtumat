@@ -1,5 +1,4 @@
-**Pylint antaa tämän raportin:
-**
+**Pylint antaa tämän raportin:**
 
     ************* Module app
     app.py:227:8: R1705: Unnecessary "else" after "return", remove the "else" and de-indent the code inside it (no-else-return)
@@ -39,8 +38,7 @@
     Your code has been rated at 9.27/10 (previous run: 9.09/10, +0.18)
 
 
-**Tarpeeton else:
-**
+**Tarpeeton else:**
 
     app.py:286:4: R1705: Unnecessary "else" after "return", remove the "else" and de-indent the code inside it (no-else-return)
 
@@ -72,7 +70,7 @@ Sen voisi kirjoittaa lyhemmin ilman elseä:
     return redirect(f"/update_event/{event_id}")
 
 
-Puuttuva palautusarvo:
+**Puuttuva palautusarvo:**
 
     app.py:361:0: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
     app.py:413:0: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
@@ -107,7 +105,7 @@ Liittyy tilanteisiin joissa on vain GET ja POST metodit. Esim funktiossa login()
 TIKAWE kurssin mukaan periaatteessa request.method voisi olla muutakin kuin GET tai POST jolloin koodi ei palauttaisi arvoa, mutta kun on erikseen määrittänyt GET ja POST metodeiksi niin tuonlaisia tilanteita ei pysty tulemaan.
 
 
-Liikaa argumentteja:
+**Liikaa argumentteja:**
 
     events.py:11:0: R0913: Too many arguments (8/5) (too-many-arguments)
     events.py:97:0: R0913: Too many arguments (7/5) (too-many-arguments)
